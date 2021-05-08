@@ -1,30 +1,14 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import SignIn from '../screens/SignIn';
-import JobVacancies from '../screens/JobVacancies';
+import AppNavigation from './app.navigation';
+import StepsNavigation from './steps.navigation';
 
-const Tab = createBottomTabNavigator();
+import { useFirstSteps } from '../contexts/steps';
 
 function Navigation() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="JobVacancies"
-        component={JobVacancies}
-        options={{
-          title: 'Anúcios',
-        }}
-      />
-      <Tab.Screen
-        name="SignIn"
-        component={SignIn}
-        options={{
-          title: 'Entrar',
-        }}
-      />
-    </Tab.Navigator>
-  );
+  const { isFirstUse } = useFirstSteps();
+
+  return isFirstUse ? <AppNavigation /> : <StepsNavigation />;
 }
 
 export default Navigation;

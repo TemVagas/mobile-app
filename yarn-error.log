@@ -2,7 +2,7 @@ Arguments:
   /snap/node/4150/bin/node /snap/node/4150/bin/yarn.js global dir --json
 
 PATH: 
-  /home/tiagoolivv/.nvm/versions/node/v14.15.4/bin:/home/tiagoolivv/.zinit/polaris/sbin:/home/tiagoolivv/.zinit/polaris/bin:/home/tiagoolivv/.npm-global/bin:/home/tiagoolivv/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/tiagoolivv/Android/Sdk/emulator:/home/tiagoolivv/Android/Sdk/tools:/home/tiagoolivv/Android/Sdk/tools/bin:/home/tiagoolivv/Android/Sdk/platform-tools
+  /home/tiagoolivv/.nvm/versions/node/v14.15.4/bin:/home/tiagoolivv/.zinit/polaris/sbin:/home/tiagoolivv/.zinit/polaris/bin:/home/tiagoolivv/.npm-global/bin:/home/tiagoolivv/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/tiagoolivv/.rvm/bin:/home/tiagoolivv/Android/Sdk/emulator:/home/tiagoolivv/Android/Sdk/tools:/home/tiagoolivv/Android/Sdk/tools/bin:/home/tiagoolivv/Android/Sdk/platform-tools:/home/tiagoolivv/.rvm/bin
 
 Yarn version: 
   1.22.5
@@ -37,6 +37,7 @@ npm manifest:
       "eject": "expo eject"
     },
     "dependencies": {
+      "@expo-google-fonts/roboto": "^0.1.0",
       "@expo/vector-icons": "^12.0.4",
       "@react-native-async-storage/async-storage": "^1.15.4",
       "@react-native-community/masked-view": "^0.1.11",
@@ -1281,6 +1282,11 @@ Lockfile:
       js-yaml "^3.13.1"
       minimatch "^3.0.4"
       strip-json-comments "^3.1.1"
+  
+  "@expo-google-fonts/roboto@^0.1.0":
+    version "0.1.0"
+    resolved "https://registry.yarnpkg.com/@expo-google-fonts/roboto/-/roboto-0.1.0.tgz#2897dc09db4ceb9f5ba337103090e1d70236e811"
+    integrity sha512-q+68xWZpLIS/iPC5jwoakEskyTVgIC1jfpNzWFMnUnBoZsWRq1rlpnleR3MjKDeN1Vt0NcvUI/aaZoCyIXhisw==
   
   "@expo/config-plugins@1.0.28", "@expo/config-plugins@^1.0.18":
     version "1.0.28"

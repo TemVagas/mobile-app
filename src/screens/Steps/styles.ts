@@ -3,7 +3,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import { RectButton } from 'react-native-gesture-handler';
 
 import { color, font } from '../../constants';
 
@@ -24,7 +23,7 @@ export const Image = styled.Image`
   width: 90%;
   height: ${hp(45)}px;
 `;
-export const Button = styled(RectButton)`
+export const Button = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   width: ${hp(8)}px;

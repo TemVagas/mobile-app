@@ -3,6 +3,7 @@ const color = {
   secondary: '#E83F5B',
   background: '#FFFFFF',
   placeholder: '#F6F6F6',
+  input: '#F1F1F7',
   text: { primary: '#0A0909', secondary: '#595959', tertiary: '#AAB2AD' },
   error: '#E83F5B',
   success: '#04D361',

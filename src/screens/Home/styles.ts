@@ -65,7 +65,7 @@ export const TextMap = styled.Text<NavigationProps>`
   margin-left: ${wp(2)}px;
   font-family: ${font.regular};
   ${props =>
-    props.navigation === 'map'
+    props.navigation === 'recolocation'
       ? css`
           color: ${color.background};
         `
@@ -97,7 +97,7 @@ export const ShadowMap = styled.View<NavigationProps>`
   shadow-radius: 1.41px;
   elevation: 4;
   ${props =>
-    props.navigation === 'map' &&
+    props.navigation === 'recolocation' &&
     css`
       background-color: ${color.primary};
     `}
@@ -119,7 +119,7 @@ export const ShadowList = styled.View<NavigationProps>`
       background-color: ${color.primary};
     `}
 `;
-export const CardList = styled(FlatList)``;
+export const List = styled(FlatList)``;
 export const Separator = styled.View`
   height: ${hp(2)}px;
 `;

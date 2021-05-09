@@ -14,13 +14,15 @@ import {
   ButtonNavigate,
   TextList,
   TextMap,
-  CardList,
+  List,
   Separator,
   Loading,
 } from './styles';
 
 import { color } from '../../constants';
-import Card from '../../components/Card';
+
+import VacancyCard from '../../components/Card/vacancy';
+import RecolocationCard from '../../components/Card/recolocation';
 
 const data = [
   1,
@@ -71,7 +73,10 @@ function JobVacancies() {
       <NavigateContainer>
         <ShadowList navigation={navigation}>
           <ButtonNavigate
-            onPress={() => setNavigation('list')}
+            onPress={() => {
+              setNavigation('list');
+              setSlice(6);
+            }}
             activeOpacity={0.8}
           >
             <Icon
@@ -86,13 +91,18 @@ function JobVacancies() {
         </ShadowList>
         <ShadowMap navigation={navigation}>
           <ButtonNavigate
-            onPress={() => setNavigation('map')}
+            onPress={() => {
+              setNavigation('recolocation');
+              setSlice(6);
+            }}
             activeOpacity={0.8}
           >
             <Icon
               size={20}
               color={
-                navigation === 'map' ? color.background : color.text.secondary
+                navigation === 'recolocation'
+                  ? color.background
+                  : color.text.secondary
               }
               name="briefcase"
             />
@@ -100,7 +110,7 @@ function JobVacancies() {
           </ButtonNavigate>
         </ShadowMap>
       </NavigateContainer>
-      <CardList
+      <List
         contentContainerStyle={{
           width: wp(100),
           alignItems: 'center',
@@ -115,7 +125,9 @@ function JobVacancies() {
         showsVerticalScrollIndicator={false}
         data={data.slice(0, slice)}
         keyExtractor={item => String(item)}
-        renderItem={() => <Card />}
+        renderItem={() => {
+          return navigation === 'list' ? <VacancyCard /> : <RecolocationCard />;
+        }}
         ItemSeparatorComponent={() => <Separator />}
         ListFooterComponent={
           slice < data.length ? (

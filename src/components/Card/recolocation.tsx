@@ -6,13 +6,11 @@ import {
   Image,
   Info,
   Title,
-  Remuneration,
-  Company,
-  CompanyContainer,
-  RemunerationContainer,
+  Subtitle,
+  SubtitleContainer,
 } from './styles';
 
-function Card() {
+function RecolocationCard() {
   const { navigate } = useNavigation();
 
   const handleNavigate = useCallback(
@@ -24,21 +22,18 @@ function Card() {
 
   return (
     <CardContainer
-      onPress={() => handleNavigate('JobDetails')}
+      onPress={() => handleNavigate('RecolocationDetails')}
       activeOpacity={0.8}
     >
       <Image source={{ uri: 'https://picsum.photos/200' }} />
       <Info>
-        <Title>Usuário está buscando por Visual Designer</Title>
-        <CompanyContainer>
-          <Company>Spotfy</Company>
-          <RemunerationContainer>
-            <Remuneration>A combinar</Remuneration>
-          </RemunerationContainer>
-        </CompanyContainer>
+        <Title>Usuário está buscando por Recolocação</Title>
+        <SubtitleContainer>
+          <Subtitle>Profissão</Subtitle>
+        </SubtitleContainer>
       </Info>
     </CardContainer>
   );
 }
 
-export default Card;
+export default RecolocationCard;

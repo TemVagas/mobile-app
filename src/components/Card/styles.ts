@@ -32,13 +32,13 @@ export const Title = styled.Text`
   color: ${color.primary};
   text-align: justify;
 `;
-export const CompanyContainer = styled.View`
+export const SubtitleContainer = styled.View`
   flex-direction: row;
   flex: 1;
   align-items: center;
   justify-content: space-between;
 `;
-export const Company = styled.Text`
+export const Subtitle = styled.Text`
   font-family: ${font.bold};
   color: ${color.text.tertiary};
   text-transform: uppercase;

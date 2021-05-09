@@ -4,12 +4,12 @@ import { Text } from 'react-native';
 
 import { Container } from './styles';
 
-function JobDetails() {
+function RecolocationDetails() {
   return (
     <Container>
-      <Text>Detalhes da vaga</Text>
+      <Text>Detalhes do usuário que busca por recolocação</Text>
     </Container>
   );
 }
 
-export default JobDetails;
+export default RecolocationDetails;

@@ -10,7 +10,7 @@ function SignIn() {
   return (
     <Container>
       <Text>Entrar</Text>
-      <Button title="resetar storage" onPress={() => removeSteps()} />
+      <Button title="login" onPress={() => removeSteps()} />
     </Container>
   );
 }

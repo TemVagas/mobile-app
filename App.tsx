@@ -14,7 +14,6 @@ import {
 import AppProvider from './src/contexts/index';
 
 import Navigation from './src/navigation';
-import { color } from './src/constants';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -27,7 +26,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar style="dark" backgroundColor={color.background} />
+      <StatusBar style="auto" backgroundColor="transparent" />
       <AppProvider>
         <Navigation />
       </AppProvider>

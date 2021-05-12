@@ -4,8 +4,11 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { FlatList } from 'react-native';
 
 import { color, font } from '../../constants';
+
+import { ItemsProps } from './vacancy';
 
 export const Container = styled.ScrollView`
   background-color: ${color.background};
@@ -117,4 +120,18 @@ export const CurriculumText = styled.Text`
   font-size: ${wp(5)}px;
   font-family: ${font.medium};
   margin-right: ${wp(4)}px;
+`;
+export const CardInfo = styled.View`
+  width: 48%;
+  height: ${hp(20)}px;
+  background-color: ${color.placeholder};
+  align-items: center;
+  justify-content: center;
+  border-radius: ${hp(2)}px;
+`;
+export const CardList = styled(FlatList as new () => FlatList<ItemsProps>)`
+  margin: ${hp(1)}px ${wp(3)}px 0px;
+`;
+export const Separator = styled.View`
+  height: ${hp(2)}px;
 `;

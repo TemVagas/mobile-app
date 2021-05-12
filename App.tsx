@@ -10,12 +10,15 @@ import {
   Roboto_400Regular,
   Roboto_700Bold,
 } from '@expo-google-fonts/roboto';
+import { LogBox } from 'react-native';
 
 import AppProvider from './src/contexts/index';
 
 import Navigation from './src/navigation';
 
 export default function App() {
+  LogBox.ignoreAllLogs();
+
   const [fontsLoaded] = useFonts({
     Roboto_500Medium,
     Roboto_400Regular,

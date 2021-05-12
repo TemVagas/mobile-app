@@ -82,10 +82,10 @@ function Profile() {
         renderRightActions={() => (
           <Animated.View style={{ flexDirection: 'row' }}>
             <ButtonUpdate activeOpacity={0.7}>
-              <Icon name="edit" size={30} color={color.background} />
+              <Icon name="edit" size={24} color={color.background} />
             </ButtonUpdate>
             <ButtonRemove activeOpacity={0.7}>
-              <Icon name="trash" size={30} color={color.background} />
+              <Icon name="trash" size={24} color={color.background} />
             </ButtonRemove>
           </Animated.View>
         )}
@@ -103,10 +103,10 @@ function Profile() {
         renderRightActions={() => (
           <Animated.View style={{ flexDirection: 'row' }}>
             <ButtonUpdate activeOpacity={0.7}>
-              <Icon name="edit" size={30} color={color.background} />
+              <Icon name="edit" size={24} color={color.background} />
             </ButtonUpdate>
             <ButtonRemove activeOpacity={0.7}>
-              <Icon name="trash" size={30} color={color.background} />
+              <Icon name="trash" size={24} color={color.background} />
             </ButtonRemove>
           </Animated.View>
         )}

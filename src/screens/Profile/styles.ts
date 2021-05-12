@@ -88,7 +88,7 @@ export const Recolocation = styled.Text`
 export const RecolocationSwitch = styled.Switch``;
 export const Vacancy = styled(Animated.View)`
   margin: ${hp(1)}px ${wp(4)}px;
-  height: ${hp(16)}px;
+  height: ${hp(14)}px;
   background-color: ${color.placeholder};
   border-radius: ${hp(2)}px;
   flex-direction: row;
@@ -119,7 +119,7 @@ export const Remuneration = styled.Text`
 `;
 export const ButtonRemove = styled.TouchableOpacity`
   width: ${wp(25)}px;
-  height: ${hp(16)}px;
+  height: ${hp(14)}px;
   background-color: ${color.error};
   border-top-right-radius: ${hp(2)}px;
   border-bottom-right-radius: ${hp(2)}px;
@@ -132,7 +132,7 @@ export const ButtonRemove = styled.TouchableOpacity`
 
 export const ButtonUpdate = styled.TouchableOpacity`
   width: ${wp(25)}px;
-  height: ${hp(16)}px;
+  height: ${hp(14)}px;
   background-color: ${color.text.tertiary};
   justify-content: center;
   align-items: center;

@@ -28,13 +28,16 @@ import {
   ButtonUpdate,
 } from './styles';
 
-import AddVacancyImg from '../../assets/add-vacancy.png';
-import UpdateProfile from '../../assets/update-profile.png';
+import { useFirstSteps } from '../../contexts/steps';
 import { color } from '../../constants';
 import { Icon } from '../Home/styles';
 
+import AddVacancyImg from '../../assets/add-vacancy.png';
+import UpdateProfile from '../../assets/update-profile.png';
+
 function Profile() {
   const [isEnabled, setIsEnabled] = useState(false);
+  const { removeSteps } = useFirstSteps();
 
   const toggleSwitch = () => setIsEnabled(state => !state);
 
@@ -54,7 +57,7 @@ function Profile() {
         <Button>
           <ButtonText>Excluir conta</ButtonText>
         </Button>
-        <Button>
+        <Button onPress={removeSteps}>
           <ButtonText>Sair</ButtonText>
         </Button>
       </ButtonContainer>

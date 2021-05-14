@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
+import { FontAwesome } from '@expo/vector-icons';
+
 import {
   Container,
   Logo,
@@ -17,6 +19,12 @@ import {
   List,
   Separator,
   Loading,
+  InterestContainer,
+  Interest,
+  CardInterest,
+  CardListInterest,
+  SeparatorInterest,
+  Info,
 } from './styles';
 
 import { color } from '../../constants';
@@ -25,27 +33,25 @@ import VacancyCard from '../../components/Card/vacancy';
 import RecolocationCard from '../../components/Card/recolocation';
 
 const data = [
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 ];
+
+const interestCard = [
+  { id: '1', icon: 'phone', company: 'Uber', wage: 'R$ 5000,00' },
+  { id: '2', icon: 'map-marker', company: 'Uber', wage: 'R$ 5000,00' },
+  { id: '3', icon: 'briefcase', company: 'Uber', wage: 'R$ 5000,00' },
+  { id: '4', icon: 'address-card', company: 'Uber', wage: 'R$ 5000,00' },
+  { id: '5', icon: 'address-card', company: 'Uber', wage: 'R$ 5000,00' },
+  { id: '6', icon: 'address-card', company: 'Uber', wage: 'R$ 5000,00' },
+];
+
+export interface ItemsProps {
+  id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: any;
+  company: string;
+  wage: string;
+}
 
 function JobVacancies() {
   const [search, setSearch] = useState('');
@@ -110,6 +116,29 @@ function JobVacancies() {
           </ButtonNavigate>
         </ShadowMap>
       </NavigateContainer>
+
+      <InterestContainer>
+        <Interest> Do seu interesse </Interest>
+      </InterestContainer>
+
+      <CardListInterest
+        horizontal={true}
+        data={interestCard}
+        keyExtractor={info => info.id}
+        ItemSeparatorComponent={() => <Separator />}
+        renderItem={({ item: info }) => {
+          return (
+            <CardInterest key={info.id}>
+              <FontAwesome size={45} color={color.primary} name={info.icon} />
+              <Info style={{ marginTop: 10 }}>
+                {info.company}
+                {info.wage}
+              </Info>
+            </CardInterest>
+          );
+        }}
+      />
+
       <List
         contentContainerStyle={{
           width: wp(100),

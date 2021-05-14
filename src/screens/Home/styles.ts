@@ -6,6 +6,7 @@ import {
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { FontAwesome } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
+import { ItemsProps } from './index';
 
 import { color, font } from '../../constants';
 
@@ -125,4 +126,41 @@ export const Separator = styled.View`
 `;
 export const Loading = styled.ActivityIndicator`
   height: ${hp(8)}px;
+`;
+export const InterestContainer = styled.View`
+  margin: 0px ${wp(4)}px;
+  right: 87px;
+`;
+export const Interest = styled.Text`
+  font-family: ${font.bold};
+  font-size: ${wp(6)}px;
+  color: ${color.primary};
+`;
+
+export const CardListInterest = styled(
+  FlatList as new () => FlatList<ItemsProps>,
+)`
+  margin: ${hp(1)}px ${wp(3)}px 5px;
+  margin-left: 60px;
+  width: 107%;
+  height: 96%;
+`;
+export const CardInterest = styled.View`
+  margin: ${hp(1)}px ${wp(3)}px 8px;
+  width: 228px;
+  height: 228px;
+  background-color: ${color.primary};
+  align-items: center;
+  justify-content: center;
+  border-radius: ${hp(2)}px;
+`;
+export const SeparatorInterest = styled.View`
+  height: ${hp(2)}px;
+`;
+
+export const Info = styled.Text`
+  border-radius: 2px;
+  font-family: ${font.medium};
+  font-size: ${wp(4)}px;
+  color: ${color.text.tertiary};
 `;

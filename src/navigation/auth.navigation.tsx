@@ -19,7 +19,7 @@ const AuthNavigation: React.FC = () => {
       initialRouteName="SignIn"
       screenOptions={{
         headerShown: false,
-        ...TransitionPresets.SlideFromRightIOS,
+        ...TransitionPresets.RevealFromBottomAndroid,
       }}
     >
       <Stack.Screen name="SingIn" component={SignIn} />

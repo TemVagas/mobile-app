@@ -17,7 +17,7 @@ const JobsNavigation: React.FC = () => {
       initialRouteName="JobVacancies"
       screenOptions={{
         headerShown: false,
-        ...TransitionPresets.SlideFromRightIOS,
+        ...TransitionPresets.ModalPresentationIOS,
       }}
     >
       <Stack.Screen name="JobVacancies" component={JobVacancies} />

@@ -13,7 +13,6 @@ export const SafeContainer = styled.SafeAreaView`
   background-color: ${color.background};
   margin-top: ${getStatusBarHeight()}px;
 `;
-
 export const Header = styled.View`
   align-items: center;
   justify-content: space-between;
@@ -139,4 +138,49 @@ export const ButtonUpdate = styled.TouchableOpacity`
   position: relative;
   right: 20px;
   margin: ${hp(1)}px 0px;
+`;
+export const ModalizeContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: ${hp(4)}px 0px;
+  color: ${color.background};
+`;
+export const ModalizeTitle = styled.Text`
+  font-family: ${font.medium};
+  font-size: ${wp(4.5)}px;
+  color: ${color.text.secondary};
+  text-align: center;
+`;
+export const ModalizeButtonContainer = styled.View`
+  margin-top: ${hp(2)}px;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+export const ConfirmButton = styled.TouchableOpacity`
+  background-color: ${color.secondary};
+  width: ${wp(35)}px;
+  height: ${hp(7.5)}px;
+  border-radius: ${hp(1)}px;
+  align-items: center;
+  justify-content: center;
+`;
+export const ConfirmTextButton = styled.Text`
+  color: ${color.background};
+  font-family: ${font.medium};
+  font-size: ${wp(4.2)}px;
+`;
+export const CancelButton = styled.TouchableOpacity`
+  background-color: ${color.placeholder};
+  width: ${wp(35)}px;
+  height: ${hp(7.5)}px;
+  border-radius: ${hp(1)}px;
+  align-items: center;
+  justify-content: center;
+`;
+export const CancelTextButton = styled.Text`
+  font-family: ${font.medium};
+  color: ${color.text.primary};
+  font-size: ${wp(4.2)}px;
 `;

@@ -154,10 +154,6 @@ export const CardInterest = styled.View`
   justify-content: center;
   border-radius: ${hp(2)}px;
 `;
-export const SeparatorInterest = styled.View`
-  height: ${hp(2)}px;
-`;
-
 export const Info = styled.Text`
   border-radius: 2px;
   font-family: ${font.medium};

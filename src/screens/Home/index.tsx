@@ -23,7 +23,6 @@ import {
   Interest,
   CardInterest,
   CardListInterest,
-  SeparatorInterest,
   Info,
 } from './styles';
 

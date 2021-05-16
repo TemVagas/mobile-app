@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, createRef } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  createRef,
+  useCallback,
+} from 'react';
 import { Keyboard, ScrollView, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -24,6 +30,13 @@ function SignIn() {
   const scrollRef = useRef<ScrollView>();
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
+
+  const handleNavigate = useCallback(
+    route => {
+      navigate(route);
+    },
+    [navigate],
+  );
 
   const keyboardDidShow = () => {
     scrollRef.current?.scrollToEnd({
@@ -76,7 +89,7 @@ function SignIn() {
       </Button>
       <SignUpContainer>
         <SignUpText>Não possui conta?</SignUpText>
-        <SimpleButton>
+        <SimpleButton onPress={() => handleNavigate('SignUp')}>
           <SignUpButtonText>CADASTRE-SE</SignUpButtonText>
         </SimpleButton>
       </SignUpContainer>

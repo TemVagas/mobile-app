@@ -7,7 +7,7 @@ import Input from '../../components/Input';
 function UpdateVacancy() {
   return (
     <Container>
-      <Logo>JobFinder - Anunciar</Logo>
+      <Logo>JobFinder - Atualizar</Logo>
       <Form contentContainerStyle={{ alignItems: 'center' }}>
         <Input
           placeholder="Titulo"

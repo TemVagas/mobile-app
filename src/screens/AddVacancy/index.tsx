@@ -61,6 +61,13 @@ function AddVacancy() {
         <Input
           placeholder="Tipo"
           icon="filter"
+          returnKeyType="next"
+          keyboardType="default"
+          autoCorrect={false}
+        />
+        <Input
+          placeholder="Categoria"
+          icon="building"
           returnKeyType="done"
           keyboardType="default"
           autoCorrect={false}

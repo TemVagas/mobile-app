@@ -4,7 +4,6 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
-import { FlatList } from 'react-native';
 
 import { color, font } from '../../constants';
 
@@ -51,9 +50,10 @@ export const Button = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   background-color: ${color.secondary};
-  height: ${hp(8)}px;
-  margin: ${wp(3)}px ${wp(3)}px 0px;
+  height: ${hp(7)}px;
   border-radius: ${hp(1)}px;
+  width: 90%;
+  margin-bottom: ${hp(2)}px;
 `;
 export const ButtonText = styled.Text`
   color: ${color.background};

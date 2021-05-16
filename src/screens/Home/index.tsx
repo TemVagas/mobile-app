@@ -33,7 +33,26 @@ import VacancyCard from '../../components/Card/vacancy';
 import RecolocationCard from '../../components/Card/recolocation';
 
 const data = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
 ];
 
 const interestCard = [
@@ -122,7 +141,7 @@ function JobVacancies() {
       </InterestContainer>
 
       <CardListInterest
-        horizontal={true}
+        horizontal
         data={interestCard}
         keyExtractor={info => info.id}
         ItemSeparatorComponent={() => <Separator />}

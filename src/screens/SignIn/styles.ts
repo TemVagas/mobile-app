@@ -3,7 +3,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import { FontAwesome } from '@expo/vector-icons';
 import { Animated } from 'react-native';
 
 import { RectButton } from 'react-native-gesture-handler';
@@ -28,18 +27,7 @@ export const InputContainer = styled.View`
   border-radius: ${hp(1)}px;
   padding: 0px ${wp(4)}px;
 `;
-export const Input = styled.TextInput`
-  flex: 1;
-  height: ${hp(7)}px;
-  padding-left: ${wp(3)}px;
-  font-family: ${font.regular};
-  color: ${color.text.secondary};
-`;
-export const Icon = styled(FontAwesome)``;
-export const SimpleButton = styled(RectButton)`
-  align-items: center;
-  justify-content: center;
-`;
+
 export const Button = styled(RectButton)`
   align-items: center;
   justify-content: center;
@@ -70,4 +58,8 @@ export const SignUpButtonText = styled.Text`
   font-family: ${font.bold};
   color: ${color.primary};
   font-size: ${wp(4.5)}px;
+`;
+export const SimpleButton = styled(RectButton)`
+  align-items: center;
+  justify-content: center;
 `;

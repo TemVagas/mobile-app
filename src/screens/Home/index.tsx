@@ -24,6 +24,7 @@ import {
   CardInterest,
   CardListInterest,
   Info,
+  TextInfo,
 } from './styles';
 
 import { color } from '../../constants';
@@ -135,27 +136,35 @@ function JobVacancies() {
         </ShadowMap>
       </NavigateContainer>
 
-      <InterestContainer>
-        <Interest> Do seu interesse </Interest>
-      </InterestContainer>
+      {navigation == 'list' && (
+        <>
+          <InterestContainer>
+            <Interest> Do seu interesse </Interest>
+          </InterestContainer>
 
-      <CardListInterest
-        horizontal
-        data={interestCard}
-        keyExtractor={info => info.id}
-        ItemSeparatorComponent={() => <Separator />}
-        renderItem={({ item: info }) => {
-          return (
-            <CardInterest key={info.id}>
-              <FontAwesome size={45} color={color.primary} name={info.icon} />
-              <Info style={{ marginTop: 10 }}>
-                {info.company}
-                {info.wage}
-              </Info>
-            </CardInterest>
-          );
-        }}
-      />
+          <CardListInterest
+            horizontal
+            data={interestCard}
+            keyExtractor={info => info.id}
+            ItemSeparatorComponent={() => <Separator />}
+            renderItem={({ item: info }) => {
+              return (
+                <CardInterest key={info.id}>
+                  <FontAwesome
+                    size={45}
+                    color={color.primary}
+                    name={info.icon}
+                  />
+                  <Info style={{ marginTop: 10 }}>
+                    {info.company}
+                    {info.wage}
+                  </Info>
+                </CardInterest>
+              );
+            }}
+          />
+        </>
+      )}
 
       <List
         contentContainerStyle={{

@@ -138,7 +138,7 @@ function JobVacancies() {
       {navigation === 'list' && (
         <>
           <InterestContainer>
-            <Interest> Do seu interesse </Interest>
+            <Interest>Do seu interesse </Interest>
           </InterestContainer>
 
           <CardListInterest

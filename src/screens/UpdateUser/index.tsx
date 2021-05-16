@@ -1,14 +1,10 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, {
-  createRef,
-  useState,
-  useCallback,
-} from 'react';
+import React, { createRef, useState } from 'react';
 
-import { Text, TextInput } from 'react-native';
+import { TextInput } from 'react-native';
 import { color } from '../../constants';
-import navigation from '../../navigation';
+
 import {
   HeaderContainer,
   Header,
@@ -30,13 +26,6 @@ function UpdateUser() {
   const passRef = createRef<TextInput>();
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
-
-  const handleNavigate = useCallback(
-    route => {
-      navigate(route);
-    },
-    [navigate],
-  );
 
   return (
     <Container>
@@ -100,18 +89,13 @@ function UpdateUser() {
             keyboardType="visible-password"
             autoCorrect={false}
           />
+          <Button activeOpacity={0.8} onPress={() => goBack()}>
+            <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
+          </Button>
         </Form>
-
-        <Button activeOpacity={0.8}>
-          <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
-        </Button>
       </Content>
     </Container>
   );
 }
 
 export default UpdateUser;
-function goBack(): void {
-  throw new Error('Function not implemented.');
-}
-

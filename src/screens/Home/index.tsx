@@ -135,10 +135,10 @@ function JobVacancies() {
         </ShadowMap>
       </NavigateContainer>
 
-      {navigation == 'list' && (
+      {navigation === 'list' && (
         <>
           <InterestContainer>
-            <Interest> Do seu interesse </Interest>
+            <Interest>Do seu interesse </Interest>
           </InterestContainer>
 
           <CardListInterest
@@ -164,7 +164,6 @@ function JobVacancies() {
           />
         </>
       )}
-
       <List
         contentContainerStyle={{
           width: wp(100),

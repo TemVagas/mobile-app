@@ -24,7 +24,6 @@ import {
   CardInterest,
   CardListInterest,
   Info,
-  TextInfo,
 } from './styles';
 
 import { color } from '../../constants';

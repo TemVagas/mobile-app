@@ -1,6 +1,6 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { createRef, useState } from 'react';
+import React, { useCallback, createRef, useState } from 'react';
 
 import { TextInput } from 'react-native';
 import { color } from '../../constants';
@@ -16,16 +16,33 @@ import {
   Title,
   StyledImage,
   Form,
+  ButtonCamera,
+  CameraIcon
 } from './styles';
 
 import Input from '../../components/Input';
+import * as ImagePicker from 'expo-image-picker';
 
 function UpdateUser() {
   const { goBack, navigate } = useNavigation();
 
   const passRef = createRef<TextInput>();
 
+  const [image, setImage] = useState<string>();
+
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
+
+  const pickImage = useCallback(async () => {
+    await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+    }).then(response => {
+      if (!response.cancelled) {
+        setImage(response.uri);
+      }
+    });
+  }, []);
 
   return (
     <Container>
@@ -43,7 +60,23 @@ function UpdateUser() {
       </HeaderContainer>
 
       <Content>
-        <StyledImage source={{ uri: 'https://picsum.photos/200' }} />
+        <ButtonCamera onPress={pickImage} activeOpacity={0.9}>
+          <StyledImage
+            source={{
+              uri:
+                image ||
+                'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
+            }}
+            resizeMode="cover"
+          />
+          <CameraIcon>
+            <FontAwesome
+              name="camera-retro"
+              color={color.background}
+              size={18}
+            />
+          </CameraIcon>
+        </ButtonCamera>
 
         <Form contentContainerStyle={{ alignItems: 'center' }}>
           <Input

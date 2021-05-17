@@ -64,3 +64,19 @@ export const Form = styled.ScrollView`
   width: 100%;
   margin-top: ${hp(2)}px;
 `;
+export const ButtonCamera = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+  width: ${wp(45)}px;
+  align-self: center;
+`;
+export const CameraIcon = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: ${hp(5)}px;
+  width: ${hp(5)}px;
+  background-color: ${color.secondary};
+  position: relative;
+  bottom: ${hp(7)}px;
+  left: ${wp(16)}px;
+`;

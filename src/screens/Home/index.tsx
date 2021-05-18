@@ -24,6 +24,10 @@ import {
   CardInterest,
   CardListInterest,
   Info,
+  TextCard,
+  InfoContainer,
+  InfoCompany,
+  InfoWage,
 } from './styles';
 
 import { color } from '../../constants';
@@ -154,10 +158,17 @@ function JobVacancies() {
                     color={color.primary}
                     name={info.icon}
                   />
-                  <Info style={{ marginTop: 10 }}>
-                    {info.company}
-                    {info.wage}
-                  </Info>
+                  <TextCard>
+                    Usuário está
+                    buscando por
+                    Product Designer
+                  </TextCard>
+                  <InfoContainer>
+                    <Info style={{  marginTop: 10 }}>
+                      <InfoCompany>{info.company}</InfoCompany>
+                      <InfoWage>{info.wage}</InfoWage>
+                    </Info>
+                  </InfoContainer>
                 </CardInterest>
               );
             }}

@@ -160,3 +160,21 @@ export const Info = styled.Text`
   font-size: ${wp(4)}px;
   color: ${color.text.tertiary};
 `;
+export const TextCard = styled.Text`
+  text-align: center;
+  border-radius: 2px;
+  font-family: ${font.medium};
+  font-size: ${wp(4)}px;
+  color: ${color.text.tertiary};
+`;
+export const InfoContainer = styled.View`
+
+`;
+export const InfoCompany = styled.Text`
+  border-radius: 10px;
+  background-color: ${color.text.secondary};
+`;
+export const InfoWage = styled.Text`
+  border-radius: 10px;
+  background-color: ${color.text.secondary};
+`;

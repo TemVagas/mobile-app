@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-import { Container, Form, Logo } from './styles';
+import { Container, Form, Logo, Button, ButtonText } from './styles';
 
 import Input from '../../components/Input';
 
 function UpdateVacancy() {
+  const { goBack } = useNavigation();
   return (
     <Container>
       <Logo>JobFinder - Atualizar</Logo>
@@ -72,6 +74,9 @@ function UpdateVacancy() {
           keyboardType="default"
           autoCorrect={false}
         />
+        <Button activeOpacity={0.8} onPress={() => goBack()}>
+          <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
+        </Button>
       </Form>
     </Container>
   );

@@ -38,7 +38,7 @@ export const Button = styled(RectButton)`
 `;
 export const ButtonText = styled.Text`
   color: ${color.background};
-  font-size: ${wp(5)}px;
+  font-size: ${wp(4.5)}px;
   font-family: ${font.medium};
 `;
 export const SignUpText = styled.Text`

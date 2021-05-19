@@ -11,11 +11,11 @@ export const CardContainer = styled.TouchableOpacity`
   justify-content: center;
   flex-direction: row;
   align-items: center;
-  padding: 0px ${wp(4)}px;
+  padding: 0px ${wp(2)}px;
 `;
 export const Image = styled.Image`
-  height: ${hp(12)}px;
-  width: ${hp(12)}px;
+  height: ${hp(10)}px;
+  width: ${hp(10)}px;
   border-radius: ${hp(10)}px;
   margin: ${hp(1)}px ${wp(2)}px ${hp(1)}px 0px;
 `;
@@ -28,7 +28,7 @@ export const Info = styled.View`
 
 export const Title = styled.Text`
   font-family: ${font.medium};
-  font-size: ${wp(5)}px;
+  font-size: ${wp(4)}px;
   color: ${color.primary};
   text-align: justify;
 `;
@@ -41,6 +41,7 @@ export const SubtitleContainer = styled.View`
 export const Subtitle = styled.Text`
   font-family: ${font.bold};
   color: ${color.text.tertiary};
+  font-size: ${wp(3.5)}px;
   text-transform: uppercase;
   flex: 1;
 `;

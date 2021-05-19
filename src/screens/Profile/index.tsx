@@ -150,7 +150,7 @@ function Profile() {
       <Modalize ref={signOutRef} adjustToContentHeight>
         <ModalizeContainer>
           <ModalizeTitle>
-            Tem certeza que deesja sair{`\n`}da sua conta?
+            Tem certeza que deseja sair{`\n`}da sua conta?
           </ModalizeTitle>
           <ModalizeButtonContainer>
             <CancelButton onPress={() => signOutRef.current?.close()}>
@@ -166,7 +166,7 @@ function Profile() {
       <Modalize ref={removeVacancyRef} adjustToContentHeight>
         <ModalizeContainer>
           <ModalizeTitle>
-            Tem certeza que deesja remover{`\n`}essa vaga?
+            Tem certeza que deseja remover{`\n`}essa vaga?
           </ModalizeTitle>
           <ModalizeButtonContainer>
             <CancelButton onPress={() => removeVacancyRef.current?.close()}>

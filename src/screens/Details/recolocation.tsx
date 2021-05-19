@@ -32,8 +32,8 @@ function VacancyDetails() {
               color={color.background}
               size={20}
             />
+            <Title>Voltar</Title>
           </GoBackButton>
-          <Title>Detalhes da Recolocação</Title>
         </Header>
       </HeaderContainer>
       <Content>

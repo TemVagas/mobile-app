@@ -17,16 +17,20 @@ export const HeaderContainer = styled.View`
   background-color: ${color.primary};
 `;
 export const GoBackButton = styled.TouchableOpacity`
-  width: ${hp(8)}px;
   height: ${hp(8)}px;
+  width: 100%;
+  margin-top: ${hp(0.5)}px;
+  margin-left: ${wp(4)}px;
   align-items: center;
+  flex-direction: row;
   justify-content: center;
 `;
 export const Title = styled.Text`
   color: ${color.background};
   font-family: ${font.bold};
-  font-size: ${wp(7)}px;
+  font-size: ${wp(6)}px;
   flex: 1;
+  margin-left: ${wp(4)}px;
 `;
 
 export const Header = styled.View`
@@ -57,7 +61,7 @@ export const Button = styled.TouchableOpacity`
 `;
 export const ButtonText = styled.Text`
   color: ${color.background};
-  font-size: ${wp(5)}px;
+  font-size: ${wp(4.5)}px;
   font-family: ${font.medium};
 `;
 export const Form = styled.ScrollView`

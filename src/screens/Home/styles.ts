@@ -122,59 +122,69 @@ export const ShadowList = styled.View<NavigationProps>`
 `;
 export const List = styled(FlatList)``;
 export const Separator = styled.View`
-  height: ${hp(2)}px;
+  height: ${hp(0.8)}px;
 `;
 export const Loading = styled.ActivityIndicator`
   height: ${hp(8)}px;
 `;
-export const InterestContainer = styled.View`
-  margin: 0px ${wp(4)}px;
-  right: 87px;
-`;
 export const Interest = styled.Text`
   font-family: ${font.bold};
-  font-size: ${wp(6)}px;
+  font-size: ${wp(5)}px;
   color: ${color.primary};
+  align-self: flex-start;
+  margin: ${hp(0)}px ${wp(5)}px ${hp(1)}px;
 `;
 
 export const CardListInterest = styled(
   FlatList as new () => FlatList<ItemsProps>,
 )`
-  margin: ${hp(1)}px ${wp(3)}px 5px;
-  margin-left: 60px;
-  width: 107%;
-  height: 96%;
+  width: 100%;
+  height: ${hp(50)}px;
 `;
-export const CardInterest = styled.View`
-  margin: ${hp(1)}px ${wp(3)}px 8px;
-  width: 228px;
-  height: 228px;
+export const CardInterest = styled.TouchableOpacity`
+  margin: 0px ${wp(2)}px 0px ${wp(5)}px;
+  width: ${wp(50)}px;
+  flex: 1;
   background-color: ${color.primary};
   align-items: center;
   justify-content: center;
   border-radius: ${hp(2)}px;
 `;
-export const Info = styled.Text`
-  border-radius: 2px;
-  font-family: ${font.medium};
-  font-size: ${wp(4)}px;
-  color: ${color.text.tertiary};
+export const Info = styled.View`
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+  margin-top: ${hp(1)}px;
 `;
 export const TextCard = styled.Text`
-  text-align: center;
-  border-radius: 2px;
+  padding: 0px ${wp(4)}px;
   font-family: ${font.medium};
-  font-size: ${wp(4)}px;
-  color: ${color.text.tertiary};
-`;
-export const InfoContainer = styled.View`
-
+  font-size: ${wp(4.5)}px;
+  color: ${color.background};
 `;
 export const InfoCompany = styled.Text`
-  border-radius: 10px;
-  background-color: ${color.text.secondary};
+  color: ${color.background};
+  font-family: ${font.bold};
+  font-size: ${hp(2.5)}px;
 `;
 export const InfoWage = styled.Text`
-  border-radius: 10px;
+  color: ${color.background};
+  font-family: ${font.bold};
+`;
+export const InfoCompanyContainer = styled.View`
   background-color: ${color.text.secondary};
+  align-items: center;
+  justify-content: center;
+  width: 35%;
+  height: ${hp(7)}px;
+  border-radius: ${hp(1)}px;
+`;
+export const InfoWageContainer = styled.View`
+  background-color: ${color.text.secondary};
+  align-items: center;
+  justify-content: center;
+  width: 35%;
+  height: ${hp(5)}px;
+  border-radius: ${hp(1)}px;
 `;

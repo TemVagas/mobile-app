@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-
-import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import {
   Container,
@@ -19,15 +18,15 @@ import {
   List,
   Separator,
   Loading,
-  InterestContainer,
   Interest,
   CardInterest,
   CardListInterest,
   Info,
   TextCard,
-  InfoContainer,
   InfoCompany,
   InfoWage,
+  InfoCompanyContainer,
+  InfoWageContainer,
 } from './styles';
 
 import { color } from '../../constants';
@@ -59,12 +58,12 @@ const data = [
 ];
 
 const interestCard = [
-  { id: '1', icon: 'phone', company: 'Uber', wage: 'R$ 5000,00' },
-  { id: '2', icon: 'map-marker', company: 'Uber', wage: 'R$ 5000,00' },
-  { id: '3', icon: 'briefcase', company: 'Uber', wage: 'R$ 5000,00' },
-  { id: '4', icon: 'address-card', company: 'Uber', wage: 'R$ 5000,00' },
-  { id: '5', icon: 'address-card', company: 'Uber', wage: 'R$ 5000,00' },
-  { id: '6', icon: 'address-card', company: 'Uber', wage: 'R$ 5000,00' },
+  { id: '1', icon: 'phone', company: 'Uber', wage: 'R$100' },
+  { id: '2', icon: 'map-marker', company: 'Uber', wage: 'R$5000' },
+  { id: '3', icon: 'briefcase', company: 'Uber', wage: 'R$5000' },
+  { id: '4', icon: 'address-card', company: 'Uber', wage: 'R$45000' },
+  { id: '5', icon: 'address-card', company: 'Uber', wage: 'R$2500' },
+  { id: '6', icon: 'address-card', company: 'Uber', wage: 'A combinar' },
 ];
 
 export interface ItemsProps {
@@ -76,9 +75,18 @@ export interface ItemsProps {
 }
 
 function JobVacancies() {
+  const { navigate } = useNavigation();
+
   const [search, setSearch] = useState('');
   const [navigation, setNavigation] = useState('list');
   const [slice, setSlice] = useState(6);
+
+  const handleNavigate = useCallback(
+    route => {
+      navigate(route);
+    },
+    [navigate],
+  );
 
   return (
     <Container>
@@ -141,34 +149,34 @@ function JobVacancies() {
 
       {navigation === 'list' && (
         <>
-          <InterestContainer>
-            <Interest>Do seu interesse </Interest>
-          </InterestContainer>
-
+          <Interest>Do seu interesse</Interest>
           <CardListInterest
+            showsHorizontalScrollIndicator={false}
             horizontal
             data={interestCard}
             keyExtractor={info => info.id}
-            ItemSeparatorComponent={() => <Separator />}
             renderItem={({ item: info }) => {
               return (
-                <CardInterest key={info.id}>
-                  <FontAwesome
-                    size={45}
-                    color={color.primary}
-                    name={info.icon}
-                  />
+                <CardInterest
+                  key={info.id}
+                  activeOpacity={0.8}
+                  onPress={() => handleNavigate('VacancyDetails')}
+                >
                   <TextCard>
-                    Usuário está
-                    buscando por
-                    Product Designer
+                    Usuário está buscando por Product Designer
                   </TextCard>
-                  <InfoContainer>
-                    <Info style={{  marginTop: 10 }}>
+                  <Info>
+                    <InfoCompanyContainer>
                       <InfoCompany>{info.company}</InfoCompany>
-                      <InfoWage>{info.wage}</InfoWage>
-                    </Info>
-                  </InfoContainer>
+                    </InfoCompanyContainer>
+                    <InfoWageContainer>
+                      <InfoWage>
+                        {info.wage.length > 6
+                          ? `${info.wage.substring(0, 5)}...`
+                          : info.wage}
+                      </InfoWage>
+                    </InfoWageContainer>
+                  </Info>
                 </CardInterest>
               );
             }}

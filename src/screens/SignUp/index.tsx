@@ -79,12 +79,12 @@ function AddVacancy() {
                 color={color.background}
                 size={20}
               />
+              <Title>Voltar</Title>
             </GoBackButton>
-            <Title>Criar Conta</Title>
           </Header>
         </HeaderContainer>
         <Content>
-          <ButtonCamera onPress={pickImage} activeOpacity={0.9}>
+          <ButtonCamera onPress={pickImage} activeOpacity={1}>
             <StyledImage
               source={{
                 uri:

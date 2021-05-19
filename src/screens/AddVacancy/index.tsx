@@ -1,10 +1,13 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-import { Container, Logo, Form } from './styles';
+import { Container, Logo, Form, Button, ButtonText } from './styles';
 
 import Input from '../../components/Input';
 
 function AddVacancy() {
+  const { goBack } = useNavigation();
+
   return (
     <Container>
       <Logo>JobFinder - Anunciar</Logo>
@@ -72,6 +75,9 @@ function AddVacancy() {
           keyboardType="default"
           autoCorrect={false}
         />
+        <Button activeOpacity={0.8} onPress={() => goBack()}>
+          <ButtonText>ANUNCIAR</ButtonText>
+        </Button>
       </Form>
     </Container>
   );

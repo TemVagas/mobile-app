@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, createRef, useState } from 'react';
 
 import { TextInput } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { color } from '../../constants';
 
 import {
@@ -17,11 +18,10 @@ import {
   StyledImage,
   Form,
   ButtonCamera,
-  CameraIcon
+  CameraIcon,
 } from './styles';
 
 import Input from '../../components/Input';
-import * as ImagePicker from 'expo-image-picker';
 
 function UpdateUser() {
   const { goBack, navigate } = useNavigation();
@@ -54,13 +54,13 @@ function UpdateUser() {
               color={color.background}
               size={20}
             />
+            <Title>Voltar</Title>
           </GoBackButton>
-          <Title>Editar Perfil</Title>
         </Header>
       </HeaderContainer>
 
       <Content>
-        <ButtonCamera onPress={pickImage} activeOpacity={0.9}>
+        <ButtonCamera onPress={pickImage} activeOpacity={1}>
           <StyledImage
             source={{
               uri:

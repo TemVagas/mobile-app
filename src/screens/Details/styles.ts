@@ -20,16 +20,18 @@ export const HeaderContainer = styled.View`
   background-color: ${color.primary};
 `;
 export const GoBackButton = styled.TouchableOpacity`
-  width: ${hp(8)}px;
-  height: ${hp(8)}px;
+  width: 100%;
+  margin-left: ${wp(4)}px;
   align-items: center;
+  flex-direction: row;
   justify-content: center;
 `;
 export const Title = styled.Text`
   color: ${color.background};
   font-family: ${font.bold};
-  font-size: ${wp(7)}px;
+  font-size: ${wp(6)}px;
   flex: 1;
+  margin-left: ${wp(4)}px;
 `;
 
 export const Header = styled.View`
@@ -52,7 +54,7 @@ export const Content = styled.View`
 export const Profession = styled.Text`
   align-self: center;
   font-family: ${font.medium};
-  font-size: ${wp(8)}px;
+  font-size: ${wp(6)}px;
   color: ${color.primary};
   margin-bottom: ${hp(2)}px;
 `;
@@ -72,7 +74,7 @@ export const Button = styled.TouchableOpacity`
 `;
 export const ButtonText = styled.Text`
   color: ${color.background};
-  font-size: ${wp(5)}px;
+  font-size: ${wp(4.5)}px;
   font-family: ${font.medium};
 `;
 export const InfoContainer = styled.View`
@@ -94,7 +96,7 @@ export const Represents = styled.Text`
 `;
 export const Role = styled.Text`
   font-family: ${font.medium};
-  font-size: ${wp(8)}px;
+  font-size: ${wp(6)}px;
   color: ${color.primary};
 `;
 export const RoleContainer = styled.View`
@@ -105,7 +107,7 @@ export const RemunerationContainer = styled.View`
 `;
 export const Remuneration = styled.Text`
   font-family: ${font.medium};
-  font-size: ${wp(8)}px;
+  font-size: ${wp(6)}px;
   color: ${color.secondary};
 `;
 export const CurriculumButton = styled.TouchableOpacity`
@@ -117,7 +119,7 @@ export const CurriculumButton = styled.TouchableOpacity`
   border-radius: ${hp(1)}px;
 `;
 export const CurriculumText = styled.Text`
-  font-size: ${wp(5)}px;
+  font-size: ${wp(4.5)}px;
   font-family: ${font.medium};
   margin-right: ${wp(4)}px;
 `;

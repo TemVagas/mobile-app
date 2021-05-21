@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { Keyboard, ScrollView, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
 
 import SignInIMG from '../../assets/signin.png';
 
@@ -22,11 +23,13 @@ import {
 } from './styles';
 
 import Input from '../../components/Input';
+import { SignInValidateShape } from '../../utils/validation';
 
 function SignIn() {
   const { navigate } = useNavigation();
 
   const passRef = createRef<TextInput>();
+
   const scrollRef = useRef<ScrollView>();
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
@@ -43,6 +46,14 @@ function SignIn() {
       animated: true,
     });
   };
+
+  const handleSignIn = useCallback(
+    async values => {
+      console.log(values);
+      navigate('Profile');
+    },
+    [navigate],
+  );
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', keyboardDidShow);
@@ -61,32 +72,60 @@ function SignIn() {
       }}
     >
       <Image source={SignInIMG} />
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        onSubmit={values => handleSignIn(values)}
+        validationSchema={SignInValidateShape}
+      >
+        {({
+          handleChange,
+          handleSubmit,
+          values,
+          errors,
+          handleBlur,
+          touched,
+        }) => (
+          <>
+            <Input
+              placeholder="E-mail"
+              icon="user"
+              onSubmitEditing={() => passRef.current?.focus()}
+              returnKeyType="next"
+              keyboardType="email-address"
+              autoCorrect={false}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              value={values.email}
+              error={touched.email && errors.email}
+            />
 
-      <Input
-        placeholder="E-mail"
-        icon="user"
-        onSubmitEditing={() => passRef.current?.focus()}
-        returnKeyType="next"
-        keyboardType="email-address"
-        autoCorrect={false}
-      />
+            <Input
+              reference={passRef}
+              placeholder="Senha"
+              icon="lock"
+              secureTextEntry={passwordIsVisible}
+              passwordIsVisible={passwordIsVisible}
+              setPasswordIsVisible={setPasswordIsVisible}
+              onSubmitEditing={() => handleSubmit()}
+              returnKeyType="done"
+              keyboardType="visible-password"
+              autoCorrect={false}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              value={values.password}
+              error={touched.password && errors.password}
+            />
 
-      <Input
-        reference={passRef}
-        placeholder="Senha"
-        icon="lock"
-        secureTextEntry={passwordIsVisible}
-        passwordIsVisible={passwordIsVisible}
-        setPasswordIsVisible={setPasswordIsVisible}
-        onSubmitEditing={() => navigate('Profile')}
-        returnKeyType="done"
-        keyboardType="visible-password"
-        autoCorrect={false}
-      />
+            <Button onPress={() => handleSubmit()}>
+              <ButtonText>LOGIN</ButtonText>
+            </Button>
+          </>
+        )}
+      </Formik>
 
-      <Button onPress={() => navigate('Profile')}>
-        <ButtonText>LOGIN</ButtonText>
-      </Button>
       <SignUpContainer>
         <SignUpText>Não possui conta?</SignUpText>
         <SimpleButton onPress={() => handleNavigate('SignUp')}>

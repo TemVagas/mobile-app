@@ -6,6 +6,7 @@ import {
 
 import JobVacancies from '../screens/Home';
 import Profile from '../screens/Profile';
+import Curriculum from '../screens/Curriculum';
 import VacancyDetails from '../screens/Details/vacancy';
 import RecolocationDetails from '../screens/Details/recolocation';
 
@@ -23,6 +24,7 @@ const JobsNavigation: React.FC = () => {
       <Stack.Screen name="JobVacancies" component={JobVacancies} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="VacancyDetails" component={VacancyDetails} />
+      <Stack.Screen name="Curriculum" component={Curriculum} />
       <Stack.Screen
         name="RecolocationDetails"
         component={RecolocationDetails}

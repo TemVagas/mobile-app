@@ -94,7 +94,7 @@ function VacancyDetails() {
           }}
         />
 
-        <Button activeOpacity={0.8}>
+        <Button activeOpacity={0.8} onPress={() => goBack()}>
           <ButtonText>CONTATAR</ButtonText>
         </Button>
       </Content>

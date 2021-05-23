@@ -21,7 +21,7 @@ import {
 } from './styles';
 
 function VacancyDetails() {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   return (
     <Container showsVerticalScrollIndicator={false}>
       <HeaderContainer>
@@ -44,7 +44,7 @@ function VacancyDetails() {
           Desenvolvimento de software.
         </Describe>
         <Describe>Sobre o usuário.</Describe>
-        <CurriculumButton>
+        <CurriculumButton onPress={() => navigate('Curriculum')}>
           <CurriculumText>Visualizar Curriculo</CurriculumText>
           <FontAwesome
             name="long-arrow-right"
@@ -52,7 +52,7 @@ function VacancyDetails() {
             size={20}
           />
         </CurriculumButton>
-        <Button activeOpacity={0.8}>
+        <Button activeOpacity={0.8} onPress={() => goBack()}>
           <ButtonText>CONTATAR</ButtonText>
         </Button>
       </Content>

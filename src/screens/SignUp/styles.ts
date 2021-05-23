@@ -4,6 +4,7 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { Animated } from 'react-native';
 
 import { color, font } from '../../constants';
 
@@ -13,7 +14,7 @@ export const Container = styled.View`
   align-items: center;
   margin-top: ${getStatusBarHeight()}px;
 `;
-export const Form = styled.ScrollView`
+export const Form = styled(Animated.ScrollView)`
   width: 100%;
   margin-top: ${hp(2)}px;
 `;
@@ -54,7 +55,7 @@ export const StyledImage = styled.Image`
 export const Content = styled.View`
   position: relative;
   bottom: ${hp(12)}px;
-  margin-bottom: ${hp(-12)}px;
+  margin-bottom: ${hp(-16)}px;
 `;
 export const Button = styled.TouchableOpacity`
   align-items: center;
@@ -85,4 +86,11 @@ export const CameraIcon = styled.View`
   position: relative;
   bottom: ${hp(7)}px;
   left: ${wp(16)}px;
+`;
+export const Error = styled.Text`
+  color: ${color.error};
+  text-align: center;
+  font-family: ${font.regular};
+  font-size: ${wp(3)}px;
+  margin-bottom: ${hp(2)}px;
 `;

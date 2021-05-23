@@ -1,10 +1,17 @@
-import React, { createRef, useCallback, useEffect, useState } from 'react';
+import React, {
+  createRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Alert, Platform, TextInput } from 'react-native';
+import { Alert, Platform, ScrollView, TextInput } from 'react-native';
 import { Formik } from 'formik';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 import {
   Container,
@@ -19,6 +26,7 @@ import {
   ButtonText,
   CameraIcon,
   ButtonCamera,
+  Error,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -34,9 +42,18 @@ function SignUp() {
   const [curriculum, setCurriculum] = useState<string>();
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
 
+  const lastNameRef = createRef<TextInput>();
   const passRef = createRef<TextInput>();
+  const emailRef = createRef<TextInput>();
+  const describeRef = createRef<TextInput>();
+  const interestsRef = createRef<TextInput>();
+  const phoneRef = createRef<TextInput>();
+  const stateRef = createRef<TextInput>();
+  const cityRef = createRef<TextInput>();
 
-  const pickImage = useCallback(async () => {
+  const scrollRef = useRef<ScrollView>();
+
+  const pickImage = useCallback(async setFieldValue => {
     await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -44,6 +61,7 @@ function SignUp() {
     }).then(response => {
       if (!response.cancelled) {
         setImage(response.uri);
+        setFieldValue('image', response.uri);
       }
     });
   }, []);
@@ -84,7 +102,7 @@ function SignUp() {
 
   return (
     <Container>
-      <Form contentContainerStyle={{ alignItems: 'center' }}>
+      <Form contentContainerStyle={{ alignItems: 'center' }} ref={scrollRef}>
         <HeaderContainer>
           <Header>
             <GoBackButton onPress={() => goBack()}>
@@ -99,6 +117,7 @@ function SignUp() {
         </HeaderContainer>
         <Formik
           initialValues={{
+            image: '',
             firstname: '',
             lastname: '',
             about: '',
@@ -119,18 +138,33 @@ function SignUp() {
             errors,
             handleBlur,
             touched,
+            setFieldValue,
           }) => (
             <>
               <Content>
-                <ButtonCamera onPress={pickImage} activeOpacity={1}>
-                  <StyledImage
-                    source={{
-                      uri:
-                        image ||
-                        'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
-                    }}
-                    resizeMode="cover"
-                  />
+                <ButtonCamera
+                  onPress={() => pickImage(setFieldValue)}
+                  activeOpacity={1}
+                >
+                  {touched.image && errors.image ? (
+                    <StyledImage
+                      source={{
+                        uri:
+                          'https://cdn0.iconfinder.com/data/icons/shift-free/32/Error-512.png',
+                      }}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <StyledImage
+                      source={{
+                        uri:
+                          image ||
+                          'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
+                      }}
+                      resizeMode="cover"
+                    />
+                  )}
+
                   <CameraIcon>
                     <FontAwesome
                       name="camera-retro"
@@ -140,6 +174,7 @@ function SignUp() {
                   </CameraIcon>
                 </ButtonCamera>
               </Content>
+              {errors.image && <Error>{errors.image}</Error>}
 
               <Input
                 placeholder="Nome"
@@ -149,11 +184,19 @@ function SignUp() {
                 autoCorrect={false}
                 onChangeText={handleChange('firstname')}
                 onBlur={handleBlur('firstname')}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(20),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => lastNameRef.current?.focus()}
                 value={values.firstname}
                 error={touched.firstname && errors.firstname}
               />
 
               <Input
+                reference={lastNameRef}
                 placeholder="Sobrenome"
                 icon="address-book"
                 returnKeyType="next"
@@ -163,8 +206,16 @@ function SignUp() {
                 onBlur={handleBlur('lastname')}
                 value={values.lastname}
                 error={touched.lastname && errors.lastname}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(35),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => emailRef.current?.focus()}
               />
               <Input
+                reference={emailRef}
                 placeholder="E-mail"
                 icon="user"
                 returnKeyType="next"
@@ -174,6 +225,13 @@ function SignUp() {
                 onBlur={handleBlur('email')}
                 value={values.email}
                 error={touched.email && errors.email}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(50),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => passRef.current?.focus()}
               />
               <Input
                 reference={passRef}
@@ -182,7 +240,6 @@ function SignUp() {
                 secureTextEntry={passwordIsVisible}
                 passwordIsVisible={passwordIsVisible}
                 setPasswordIsVisible={setPasswordIsVisible}
-                onSubmitEditing={() => handleSubmit()}
                 returnKeyType="done"
                 keyboardType="visible-password"
                 autoCorrect={false}
@@ -190,8 +247,16 @@ function SignUp() {
                 onBlur={handleBlur('password')}
                 value={values.password}
                 error={touched.password && errors.password}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(65),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => describeRef.current?.focus()}
               />
               <Input
+                reference={describeRef}
                 placeholder="Nos conte sobre você"
                 icon="address-card"
                 returnKeyType="next"
@@ -201,8 +266,17 @@ function SignUp() {
                 onBlur={handleBlur('about')}
                 value={values.about}
                 error={touched.about && errors.about}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(80),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => interestsRef.current?.focus()}
               />
+
               <Input
+                reference={interestsRef}
                 placeholder="Seus interesses"
                 icon="list"
                 returnKeyType="next"
@@ -212,9 +286,17 @@ function SignUp() {
                 onBlur={handleBlur('interests')}
                 value={values.interests}
                 error={touched.interests && errors.interests}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(95),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => phoneRef.current?.focus()}
               />
 
               <Input
+                reference={phoneRef}
                 placeholder="Telefone"
                 icon="phone"
                 returnKeyType="next"
@@ -224,8 +306,16 @@ function SignUp() {
                 onBlur={handleBlur('phone')}
                 value={values.phone}
                 error={touched.phone && errors.phone}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(110),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => stateRef.current?.focus()}
               />
               <Input
+                reference={stateRef}
                 placeholder="Estado"
                 icon="globe"
                 returnKeyType="next"
@@ -235,8 +325,16 @@ function SignUp() {
                 onBlur={handleBlur('state')}
                 value={values.state}
                 error={touched.state && errors.state}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(125),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => cityRef.current?.focus()}
               />
               <Input
+                reference={cityRef}
                 placeholder="Cidade"
                 icon="location-arrow"
                 returnKeyType="next"
@@ -246,6 +344,17 @@ function SignUp() {
                 onBlur={handleBlur('city')}
                 value={values.city}
                 error={touched.city && errors.city}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(140),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() =>
+                  scrollRef.current?.scrollToEnd({
+                    animated: true,
+                  })
+                }
               />
               <Button
                 activeOpacity={0.8}

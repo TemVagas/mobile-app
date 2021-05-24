@@ -5,6 +5,7 @@ import {
 } from 'react-native-responsive-screen';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { Animated } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import { color, font } from '../../constants';
 
@@ -93,4 +94,9 @@ export const Error = styled.Text`
   font-family: ${font.regular};
   font-size: ${wp(3)}px;
   margin-bottom: ${hp(2)}px;
+`;
+export const Select = styled(Picker)`
+  height: ${hp(8)};
+  width: 90%;
+  border: 1px solid #000;
 `;

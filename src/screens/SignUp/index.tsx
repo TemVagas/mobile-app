@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   createRef,
   useCallback,
@@ -11,7 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Alert, Platform, ScrollView, TextInput } from 'react-native';
 import { Formik } from 'formik';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 
 import {
   Container,
@@ -27,6 +31,7 @@ import {
   CameraIcon,
   ButtonCamera,
   Error,
+  Select,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -46,10 +51,7 @@ function SignUp() {
   const passRef = createRef<TextInput>();
   const emailRef = createRef<TextInput>();
   const describeRef = createRef<TextInput>();
-  const interestsRef = createRef<TextInput>();
   const phoneRef = createRef<TextInput>();
-  const stateRef = createRef<TextInput>();
-  const cityRef = createRef<TextInput>();
 
   const scrollRef = useRef<ScrollView>();
 
@@ -84,6 +86,18 @@ function SignUp() {
     },
     [navigate],
   );
+
+  const maskPhone = (value: string) => {
+    value = value.replace(/\D/g, '');
+    value = value.replace(/^(\d{2})(\d)/g, '($1)$2');
+    value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+    return value;
+  };
+
+  const handleMaskPhone = useCallback((text: string, setFieldValue) => {
+    const value = maskPhone(text);
+    setFieldValue('phone', value);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -175,7 +189,6 @@ function SignUp() {
                 </ButtonCamera>
               </Content>
               {errors.image && <Error>{errors.image}</Error>}
-
               <Input
                 placeholder="Nome"
                 icon="address-book"
@@ -194,7 +207,6 @@ function SignUp() {
                 value={values.firstname}
                 error={touched.firstname && errors.firstname}
               />
-
               <Input
                 reference={lastNameRef}
                 placeholder="Sobrenome"
@@ -253,10 +265,31 @@ function SignUp() {
                     animated: true,
                   })
                 }
+                onSubmitEditing={() => phoneRef.current?.focus()}
+              />
+              <Input
+                reference={phoneRef}
+                placeholder="Telefone"
+                icon="phone"
+                maxLength={14}
+                returnKeyType="next"
+                keyboardType="number-pad"
+                autoCorrect={false}
+                onChangeText={text => handleMaskPhone(text, setFieldValue)}
+                onBlur={handleBlur('phone')}
+                value={values.phone}
+                error={touched.phone && errors.phone}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(80),
+                    animated: true,
+                  })
+                }
                 onSubmitEditing={() => describeRef.current?.focus()}
               />
               <Input
                 reference={describeRef}
+                multiline
                 placeholder="Nos conte sobre você"
                 icon="address-card"
                 returnKeyType="next"
@@ -268,94 +301,65 @@ function SignUp() {
                 error={touched.about && errors.about}
                 onFocus={() =>
                   scrollRef.current?.scrollTo({
-                    y: hp(80),
-                    animated: true,
-                  })
-                }
-                onSubmitEditing={() => interestsRef.current?.focus()}
-              />
-
-              <Input
-                reference={interestsRef}
-                placeholder="Seus interesses"
-                icon="list"
-                returnKeyType="next"
-                keyboardType="default"
-                autoCorrect={false}
-                onChangeText={handleChange('interests')}
-                onBlur={handleBlur('interests')}
-                value={values.interests}
-                error={touched.interests && errors.interests}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
                     y: hp(95),
                     animated: true,
                   })
                 }
-                onSubmitEditing={() => phoneRef.current?.focus()}
               />
 
-              <Input
-                reference={phoneRef}
-                placeholder="Telefone"
-                icon="phone"
-                returnKeyType="next"
-                keyboardType="number-pad"
-                autoCorrect={false}
-                onChangeText={handleChange('phone')}
-                onBlur={handleBlur('phone')}
-                value={values.phone}
-                error={touched.phone && errors.phone}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(110),
-                    animated: true,
-                  })
+              <Select
+                onValueChange={itemValue =>
+                  setFieldValue('interests', itemValue)
                 }
-                onSubmitEditing={() => stateRef.current?.focus()}
-              />
-              <Input
-                reference={stateRef}
-                placeholder="Estado"
-                icon="globe"
-                returnKeyType="next"
-                keyboardType="default"
-                autoCorrect={false}
-                onChangeText={handleChange('state')}
-                onBlur={handleBlur('state')}
-                value={values.state}
-                error={touched.state && errors.state}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(125),
-                    animated: true,
-                  })
-                }
-                onSubmitEditing={() => cityRef.current?.focus()}
-              />
-              <Input
-                reference={cityRef}
-                placeholder="Cidade"
-                icon="location-arrow"
-                returnKeyType="next"
-                keyboardType="default"
-                autoCorrect={false}
-                onChangeText={handleChange('city')}
-                onBlur={handleBlur('city')}
-                value={values.city}
-                error={touched.city && errors.city}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(140),
-                    animated: true,
-                  })
-                }
-                onSubmitEditing={() =>
-                  scrollRef.current?.scrollToEnd({
-                    animated: true,
-                  })
-                }
-              />
+              >
+                <Select.Item label="Declare sua area de interesse" value="" />
+                <Select.Item label="Medico" value="1" />
+                <Select.Item label="Desenvolvimento de Software" value="2" />
+                <Select.Item label="Nutricionista" value="3" />
+                <Select.Item label="Engenheiro Eletrico" value="4" />
+              </Select>
+              {errors.interests ? (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
+                  {errors.interests}
+                </Error>
+              ) : (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+              )}
+
+              <Select
+                onValueChange={itemValue => setFieldValue('state', itemValue)}
+              >
+                <Select.Item label="Selecione um estado" value="" />
+                <Select.Item label="Piaui" value="1" />
+                <Select.Item label="São Paulo" value="2" />
+                <Select.Item label="Fortaleza" value="3" />
+                <Select.Item label="Pernambuco" value="4" />
+              </Select>
+              {errors.state ? (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
+                  {errors.state}
+                </Error>
+              ) : (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+              )}
+
+              <Select
+                onValueChange={itemValue => setFieldValue('city', itemValue)}
+              >
+                <Select.Item label="Selecione uma cidade" value="" />
+                <Select.Item label="Picos" value="1" />
+                <Select.Item label="Araripina" value="2" />
+                <Select.Item label="Crato" value="3" />
+                <Select.Item label="Teresina" value="4" />
+              </Select>
+              {errors.city ? (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
+                  {errors.city}
+                </Error>
+              ) : (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+              )}
+
               <Button
                 activeOpacity={0.8}
                 onPress={pickDocument}

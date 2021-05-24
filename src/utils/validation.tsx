@@ -14,7 +14,7 @@ export const SignUpValidateShape = Yup.object().shape({
   firstname: Yup.string().required('Nome é um campo obrigatório'),
   lastname: Yup.string().required('Sobrenome é um campo obrigatório'),
   about: Yup.string().required('Este é um campo obrigatório'),
-  interests: Yup.string().required('É nesessário declarar seu(s) interesses'),
+  interests: Yup.string().required('É nesessário declarar algum interesse'),
   email: Yup.string()
     .email('Formato de email inválido')
     .required('Email é um campo obrigatório'),
@@ -24,6 +24,6 @@ export const SignUpValidateShape = Yup.object().shape({
   password: Yup.string()
     .min(6, 'A senha deve conter no minimo 6 caracteres')
     .required('Senha é um campo obrigatório'),
-  state: Yup.string().required('Estado é um campo obrigatório'),
-  city: Yup.string().required('Cidade é um campo obrigatório'),
+  state: Yup.string().required('É necessário selecionar um estado'),
+  city: Yup.string().required('É necessário selecionar uma cidade'),
 });

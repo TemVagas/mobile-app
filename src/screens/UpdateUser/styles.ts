@@ -84,3 +84,10 @@ export const CameraIcon = styled.View`
   bottom: ${hp(7)}px;
   left: ${wp(16)}px;
 `;
+export const Error = styled.Text`
+  color: ${color.error};
+  text-align: center;
+  font-family: ${font.regular};
+  font-size: ${wp(3)}px;
+  margin-bottom: ${hp(2)}px;
+`;

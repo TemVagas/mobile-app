@@ -102,7 +102,7 @@ function UpdateUser() {
   );
 
   const LinkingToCreateCurriculum = useCallback(async () => {
-    await Linking.openURL('https://www.google.com/');
+    await Linking.openURL('https://geracurriculo.com.br/');
   }, []);
 
   useEffect(() => {

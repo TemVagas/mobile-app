@@ -101,7 +101,6 @@ function SignIn() {
               value={values.email}
               error={touched.email && errors.email}
             />
-            {console.log(passwordIsVisible)}
             <Input
               reference={passRef}
               icon="lock"

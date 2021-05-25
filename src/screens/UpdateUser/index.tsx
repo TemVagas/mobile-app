@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, {
@@ -10,10 +11,14 @@ import React, {
 
 import { TextInput, ScrollView, Platform, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { color } from '../../constants';
+import * as DocumentPicker from 'expo-document-picker';
 import { Formik } from 'formik';
-import { SignUpValidateShape } from '../../utils/validation';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
+import { color } from '../../constants';
+import { UpdateUserValidateShape } from '../../utils/validation';
 
 import {
   HeaderContainer,
@@ -29,6 +34,7 @@ import {
   ButtonCamera,
   CameraIcon,
   Error,
+  Select,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -36,16 +42,18 @@ import Input from '../../components/Input';
 function UpdateUser() {
   const { goBack, navigate } = useNavigation();
 
-  const emailRef = createRef<TextInput>();
+  const scrollRef = useRef<ScrollView>();
+
+  const lastNameRef = createRef<TextInput>();
   const passRef = createRef<TextInput>();
-  const newPassRef = createRef<TextInput>();
+  const emailRef = createRef<TextInput>();
+  const describeRef = createRef<TextInput>();
+  const phoneRef = createRef<TextInput>();
 
   const [image, setImage] = useState<string>();
+  const [curriculum, setCurriculum] = useState<string>();
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
-  const [newPasswordIsVisible, setNewPasswordIsVisible] = useState(true);
-
-  const scrollRef = useRef<ScrollView>();
 
   const pickImage = useCallback(async setFieldValue => {
     await ImagePicker.launchImageLibraryAsync({
@@ -60,7 +68,30 @@ function UpdateUser() {
     });
   }, []);
 
-  const handleSignUp = useCallback(
+  const pickDocument = useCallback(async () => {
+    await DocumentPicker.getDocumentAsync({
+      type: 'application/pdf',
+      multiple: false,
+    }).then(response => {
+      if (response.type === 'success') {
+        setCurriculum(response.uri);
+      }
+    });
+  }, []);
+
+  const maskPhone = (value: string) => {
+    value = value.replace(/\D/g, '');
+    value = value.replace(/^(\d{2})(\d)/g, '($1)$2');
+    value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+    return value;
+  };
+
+  const handleMaskPhone = useCallback((text: string, setFieldValue) => {
+    const value = maskPhone(text);
+    setFieldValue('phone', value);
+  }, []);
+
+  const handleUpdateUser = useCallback(
     async values => {
       console.log(values);
       navigate('Profile');
@@ -71,8 +102,9 @@ function UpdateUser() {
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           Alert.alert(
             'Precisamos de permissões de para buscar suas fotos na galeria!',
@@ -84,7 +116,7 @@ function UpdateUser() {
 
   return (
     <Container>
-      <Form contentContainerStyle={{ alignItems: 'center' }} ref={scrollRef}>
+      <Form ref={scrollRef} contentContainerStyle={{ alignItems: 'center' }}>
         <HeaderContainer>
           <Header>
             <GoBackButton onPress={() => goBack()}>
@@ -97,15 +129,22 @@ function UpdateUser() {
             </GoBackButton>
           </Header>
         </HeaderContainer>
+
         <Formik
           initialValues={{
             image: '',
+            firstname: '',
+            lastname: '',
+            about: '',
+            interests: '',
             email: '',
             password: '',
-            newPassword: '',
+            phone: '',
+            state: '',
+            city: '',
           }}
-          onSubmit={values => handleSignUp(values)}
-          validationSchema={SignUpValidateShape}
+          onSubmit={values => handleUpdateUser(values)}
+          validationSchema={UpdateUserValidateShape}
         >
           {({
             handleChange,
@@ -122,23 +161,14 @@ function UpdateUser() {
                   onPress={() => pickImage(setFieldValue)}
                   activeOpacity={1}
                 >
-                  {touched.image && errors.image ? (
-                    <StyledImage
-                      source={{
-                        uri: 'https://cdn0.iconfinder.com/data/icons/shift-free/32/Error-512.png',
-                      }}
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <StyledImage
-                      source={{
-                        uri:
-                          image ||
-                          'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
-                      }}
-                      resizeMode="cover"
-                    />
-                  )}
+                  <StyledImage
+                    source={{
+                      uri:
+                        image ||
+                        'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
+                    }}
+                    resizeMode="cover"
+                  />
 
                   <CameraIcon>
                     <FontAwesome
@@ -150,7 +180,43 @@ function UpdateUser() {
                 </ButtonCamera>
               </Content>
               {errors.image && <Error>{errors.image}</Error>}
-
+              <Input
+                placeholder="Nome"
+                icon="address-book"
+                returnKeyType="next"
+                keyboardType="default"
+                autoCorrect={false}
+                onChangeText={handleChange('firstname')}
+                onBlur={handleBlur('firstname')}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(40),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => lastNameRef.current?.focus()}
+                value={values.firstname}
+                error={touched.firstname && errors.firstname}
+              />
+              <Input
+                reference={lastNameRef}
+                placeholder="Sobrenome"
+                icon="address-book"
+                returnKeyType="next"
+                keyboardType="default"
+                autoCorrect={false}
+                onChangeText={handleChange('lastname')}
+                onBlur={handleBlur('lastname')}
+                value={values.lastname}
+                error={touched.lastname && errors.lastname}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(35),
+                    animated: true,
+                  })
+                }
+                onSubmitEditing={() => emailRef.current?.focus()}
+              />
               <Input
                 reference={emailRef}
                 placeholder="E-mail"
@@ -172,12 +238,12 @@ function UpdateUser() {
               />
               <Input
                 reference={passRef}
-                placeholder="Senha"
+                placeholder="Nova senha"
                 icon="lock"
                 secureTextEntry={passwordIsVisible}
                 passwordIsVisible={passwordIsVisible}
                 setPasswordIsVisible={setPasswordIsVisible}
-                returnKeyType="next"
+                returnKeyType="done"
                 keyboardType="visible-password"
                 autoCorrect={false}
                 onChangeText={handleChange('password')}
@@ -190,35 +256,118 @@ function UpdateUser() {
                     animated: true,
                   })
                 }
-                onSubmitEditing={() => newPassRef.current?.focus()}
+                onSubmitEditing={() => phoneRef.current?.focus()}
               />
               <Input
-                reference={newPassRef}
-                placeholder="Nova Senha"
-                icon="lock"
-                secureTextEntry={newPasswordIsVisible}
-                passwordIsVisible={newPasswordIsVisible}
-                setPasswordIsVisible={setNewPasswordIsVisible}
-                returnKeyType="done"
-                keyboardType="visible-password"
+                reference={phoneRef}
+                placeholder="Telefone"
+                icon="phone"
+                maxLength={14}
+                returnKeyType="next"
+                keyboardType="number-pad"
                 autoCorrect={false}
-                onChangeText={handleChange('newPassword')}
-                onBlur={handleBlur('newPassword')}
-                value={values.newPassword}
-                error={touched.newPassword && errors.newPassword}
+                onChangeText={text => handleMaskPhone(text, setFieldValue)}
+                onBlur={handleBlur('phone')}
+                value={values.phone}
+                error={touched.phone && errors.phone}
                 onFocus={() =>
                   scrollRef.current?.scrollTo({
-                    y: hp(65),
+                    y: hp(80),
                     animated: true,
                   })
                 }
-                onSubmitEditing={() =>
-                  scrollRef.current?.scrollToEnd({
+                onSubmitEditing={() => describeRef.current?.focus()}
+              />
+              <Input
+                reference={describeRef}
+                multiline
+                placeholder="Nos conte sobre você"
+                icon="address-card"
+                returnKeyType="next"
+                keyboardType="default"
+                autoCorrect={false}
+                onChangeText={handleChange('about')}
+                onBlur={handleBlur('about')}
+                value={values.about}
+                error={touched.about && errors.about}
+                onFocus={() =>
+                  scrollRef.current?.scrollTo({
+                    y: hp(95),
                     animated: true,
                   })
                 }
               />
 
+              <Select
+                onValueChange={itemValue =>
+                  setFieldValue('interests', itemValue)
+                }
+              >
+                <Select.Item label="Declare sua area de interesse" value="" />
+                <Select.Item label="Medico" value="1" />
+                <Select.Item label="Desenvolvimento de Software" value="2" />
+                <Select.Item label="Nutricionista" value="3" />
+                <Select.Item label="Engenheiro Eletrico" value="4" />
+              </Select>
+              {errors.interests && touched.interests ? (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
+                  {errors.interests}
+                </Error>
+              ) : (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+              )}
+
+              <Select
+                onValueChange={itemValue => setFieldValue('state', itemValue)}
+              >
+                <Select.Item label="Selecione um estado" value="" />
+                <Select.Item label="Piaui" value="1" />
+                <Select.Item label="São Paulo" value="2" />
+                <Select.Item label="Fortaleza" value="3" />
+                <Select.Item label="Pernambuco" value="4" />
+              </Select>
+              {errors.state && touched.state ? (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
+                  {errors.state}
+                </Error>
+              ) : (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+              )}
+
+              <Select
+                onValueChange={itemValue => setFieldValue('city', itemValue)}
+              >
+                <Select.Item label="Selecione uma cidade" value="" />
+                <Select.Item label="Picos" value="1" />
+                <Select.Item label="Araripina" value="2" />
+                <Select.Item label="Crato" value="3" />
+                <Select.Item label="Teresina" value="4" />
+              </Select>
+              {errors.city && touched.city ? (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
+                  {errors.city}
+                </Error>
+              ) : (
+                <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+              )}
+
+              <Button
+                activeOpacity={0.8}
+                onPress={pickDocument}
+                style={{
+                  backgroundColor: color.primary,
+                }}
+              >
+                {curriculum ? (
+                  <FontAwesome
+                    name="check"
+                    color={color.background}
+                    size={20}
+                  />
+                ) : (
+                  <ButtonText>ATUALIZAR CURRICULO</ButtonText>
+                )}
+              </Button>
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
                 <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
               </Button>

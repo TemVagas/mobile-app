@@ -318,7 +318,7 @@ function SignUp() {
                 <Select.Item label="Nutricionista" value="3" />
                 <Select.Item label="Engenheiro Eletrico" value="4" />
               </Select>
-              {errors.interests ? (
+              {errors.interests && touched.interests ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
                   {errors.interests}
                 </Error>
@@ -335,7 +335,7 @@ function SignUp() {
                 <Select.Item label="Fortaleza" value="3" />
                 <Select.Item label="Pernambuco" value="4" />
               </Select>
-              {errors.state ? (
+              {errors.state && touched.state ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
                   {errors.state}
                 </Error>
@@ -352,7 +352,7 @@ function SignUp() {
                 <Select.Item label="Crato" value="3" />
                 <Select.Item label="Teresina" value="4" />
               </Select>
-              {errors.city ? (
+              {errors.city && touched.city ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
                   {errors.city}
                 </Error>

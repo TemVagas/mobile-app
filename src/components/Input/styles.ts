@@ -8,9 +8,7 @@ import { RectButton } from 'react-native-gesture-handler';
 
 import { color, font } from '../../constants';
 
-interface InputProps {
-  error: string | undefined | boolean;
-}
+import { InputProps } from '.';
 
 export const Container = styled.View`
   margin-bottom: ${hp(2)}px;
@@ -18,7 +16,7 @@ export const Container = styled.View`
   justify-content: center;
 `;
 
-export const InputContainer = styled.View<InputProps>`
+export const InputContainer = styled.View<Partial<InputProps>>`
   background-color: ${color.input};
   align-items: center;
   justify-content: center;
@@ -32,19 +30,11 @@ export const InputContainer = styled.View<InputProps>`
       border: 1px solid ${color.error};
     `}
 `;
-export const StyledInput = styled.TextInput<InputProps>`
+export const StyledInput = styled.TextInput`
   flex: 1;
   height: ${hp(7)}px;
   padding-left: ${wp(3)}px;
   font-family: ${font.regular};
-  ${props =>
-    props.error
-      ? css`
-          color: ${color.error};
-        `
-      : css`
-          color: ${color.text.secondary};
-        `}
 `;
 export const Icon = styled(FontAwesome)``;
 export const SimpleButton = styled(RectButton)`

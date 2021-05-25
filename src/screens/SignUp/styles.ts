@@ -96,7 +96,6 @@ export const Error = styled.Text`
   margin-bottom: ${hp(2)}px;
 `;
 export const Select = styled(Picker)`
-  height: ${hp(8)};
+  height: ${hp(5)};
   width: 90%;
-  border: 1px solid #000;
 `;

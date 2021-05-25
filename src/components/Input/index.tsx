@@ -12,7 +12,7 @@ import {
   Container,
 } from './styles';
 
-interface InputProps extends TextInputProps {
+export interface InputProps extends TextInputProps {
   passwordIsVisible: boolean;
   setPasswordIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   reference: React.Ref<TextInput> | undefined;

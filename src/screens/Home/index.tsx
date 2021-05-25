@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
+import { Keyboard } from 'react-native';
 
 import {
   Container,
@@ -80,6 +81,7 @@ function JobVacancies() {
   const [search, setSearch] = useState('');
   const [navigation, setNavigation] = useState('list');
   const [slice, setSlice] = useState(6);
+  const [keyboardStatus, setKeyboardStatus] = useState<boolean>();
 
   const handleNavigate = useCallback(
     route => {
@@ -87,6 +89,19 @@ function JobVacancies() {
     },
     [navigate],
   );
+
+  const keyboardDidShow = () => setKeyboardStatus(true);
+  const keyboardDidHide = () => setKeyboardStatus(false);
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', keyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', keyboardDidHide);
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', keyboardDidShow);
+      Keyboard.removeListener('keyboardDidHide', keyboardDidHide);
+    };
+  }, []);
 
   return (
     <Container>
@@ -106,48 +121,53 @@ function JobVacancies() {
           <Icon name="search" size={18} color={color.text.tertiary} />
         )}
       </SearchContainer>
-      <NavigateContainer>
-        <ShadowList navigation={navigation}>
-          <ButtonNavigate
-            onPress={() => {
-              setNavigation('list');
-              setSlice(6);
-            }}
-            activeOpacity={0.8}
-          >
-            <Icon
-              size={20}
-              color={
-                navigation === 'list' ? color.background : color.text.secondary
-              }
-              name="list"
-            />
-            <TextList navigation={navigation}>Vagas</TextList>
-          </ButtonNavigate>
-        </ShadowList>
-        <ShadowMap navigation={navigation}>
-          <ButtonNavigate
-            onPress={() => {
-              setNavigation('recolocation');
-              setSlice(6);
-            }}
-            activeOpacity={0.8}
-          >
-            <Icon
-              size={20}
-              color={
-                navigation === 'recolocation'
-                  ? color.background
-                  : color.text.secondary
-              }
-              name="briefcase"
-            />
-            <TextMap navigation={navigation}>Recolocação</TextMap>
-          </ButtonNavigate>
-        </ShadowMap>
-      </NavigateContainer>
 
-      {navigation === 'list' && (
+      {!keyboardStatus && (
+        <NavigateContainer>
+          <ShadowList navigation={navigation}>
+            <ButtonNavigate
+              onPress={() => {
+                setNavigation('list');
+                setSlice(6);
+              }}
+              activeOpacity={0.8}
+            >
+              <Icon
+                size={20}
+                color={
+                  navigation === 'list'
+                    ? color.background
+                    : color.text.secondary
+                }
+                name="list"
+              />
+              <TextList navigation={navigation}>Vagas</TextList>
+            </ButtonNavigate>
+          </ShadowList>
+          <ShadowMap navigation={navigation}>
+            <ButtonNavigate
+              onPress={() => {
+                setNavigation('recolocation');
+                setSlice(6);
+              }}
+              activeOpacity={0.8}
+            >
+              <Icon
+                size={20}
+                color={
+                  navigation === 'recolocation'
+                    ? color.background
+                    : color.text.secondary
+                }
+                name="briefcase"
+              />
+              <TextMap navigation={navigation}>Recolocação</TextMap>
+            </ButtonNavigate>
+          </ShadowMap>
+        </NavigateContainer>
+      )}
+
+      {navigation === 'list' && !keyboardStatus && search.length === 0 && (
         <>
           <Interest>Do seu interesse</Interest>
           <CardListInterest

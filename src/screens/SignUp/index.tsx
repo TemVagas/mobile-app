@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Alert, Platform, ScrollView, TextInput } from 'react-native';
+import { Alert, Platform, ScrollView, TextInput, Linking } from 'react-native';
 import { Formik } from 'formik';
 import {
   heightPercentageToDP as hp,
@@ -32,6 +32,8 @@ import {
   ButtonCamera,
   Error,
   Select,
+  CreateCurriculum,
+  CreateCurriculumText,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -97,6 +99,10 @@ function SignUp() {
   const handleMaskPhone = useCallback((text: string, setFieldValue) => {
     const value = maskPhone(text);
     setFieldValue('phone', value);
+  }, []);
+
+  const LinkingToCreateCurriculum = useCallback(async () => {
+    await Linking.openURL('https://www.google.com/');
   }, []);
 
   useEffect(() => {
@@ -377,6 +383,11 @@ function SignUp() {
                   <ButtonText>CURRICULO</ButtonText>
                 )}
               </Button>
+              <CreateCurriculum onPress={LinkingToCreateCurriculum}>
+                <CreateCurriculumText>
+                  Não possui curriculo? Clique aqui e crie o seu!
+                </CreateCurriculumText>
+              </CreateCurriculum>
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
                 <ButtonText>CONCLUIR</ButtonText>
               </Button>

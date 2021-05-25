@@ -9,7 +9,7 @@ import React, {
   useEffect,
 } from 'react';
 
-import { TextInput, ScrollView, Platform, Alert } from 'react-native';
+import { TextInput, ScrollView, Platform, Alert, Linking } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Formik } from 'formik';
@@ -35,6 +35,8 @@ import {
   CameraIcon,
   Error,
   Select,
+  CreateCurriculum,
+  CreateCurriculumText,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -98,6 +100,10 @@ function UpdateUser() {
     },
     [navigate],
   );
+
+  const LinkingToCreateCurriculum = useCallback(async () => {
+    await Linking.openURL('https://www.google.com/');
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -368,6 +374,13 @@ function UpdateUser() {
                   <ButtonText>ATUALIZAR CURRICULO</ButtonText>
                 )}
               </Button>
+
+              <CreateCurriculum onPress={LinkingToCreateCurriculum}>
+                <CreateCurriculumText>
+                  Curriculo desatualizado? Clique aqui e gere um novo!
+                </CreateCurriculumText>
+              </CreateCurriculum>
+
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
                 <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
               </Button>

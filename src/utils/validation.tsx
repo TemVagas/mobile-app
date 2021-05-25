@@ -55,7 +55,7 @@ export const AddVacancyValidateShape = Yup.object().shape({
   phone: Yup.string()
     .min(11, 'O número de telefone deve conter 11 caracteres')
     .required('Telefone é um campo obrigatório'),
-  remuneration: Yup.string().required('Remuneração é um campo obrigatório'),
+  // remuneration: Yup.string().required('Salario é um campo obrigatório'),
   state: Yup.string().required('É necessário selecionar um estado'),
   city: Yup.string().required('É necessário selecionar uma cidade'),
   type: Yup.string().required('É nesessário declarar um tipo'),
@@ -71,7 +71,7 @@ export const UpdateVacancyValidateShape = Yup.object().shape({
   phone: Yup.string()
     .min(11, 'O número de telefone deve conter 11 caracteres')
     .required('Telefone é um campo obrigatório'),
-  remuneration: Yup.string().required('Remuneração é um campo obrigatório'),
+  // remuneration: Yup.string().required('Salario é um campo obrigatório'),
   state: Yup.string().required('É necessário selecionar um estado'),
   city: Yup.string().required('É necessário selecionar uma cidade'),
   type: Yup.string().required('É nesessário declarar um tipo'),

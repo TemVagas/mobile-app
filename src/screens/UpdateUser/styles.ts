@@ -97,3 +97,12 @@ export const Select = styled(Picker)`
   height: ${hp(5)};
   width: 90%;
 `;
+export const CreateCurriculum = styled.TouchableOpacity`
+  margin-bottom: ${hp(2)}px;
+`;
+export const CreateCurriculumText = styled.Text`
+  font-family: ${font.regular};
+  border-bottom-color: ${color.primary};
+  border-bottom-width: 1px;
+  font-size: ${wp(3.4)}px;
+`;

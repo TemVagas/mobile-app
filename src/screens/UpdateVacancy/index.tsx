@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import React, { createRef, useCallback, useRef } from 'react';
+import React, { createRef, useCallback, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { ScrollView, TextInput } from 'react-native';
+import { ScrollView, TextInput, Switch } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -16,11 +16,14 @@ import {
   ButtonText,
   Select,
   Error,
+  SwitchContainer,
+  SwitchText,
 } from './styles';
 
 import Input from '../../components/Input';
 
 import { UpdateVacancyValidateShape } from '../../utils/validation';
+import { color } from '../../constants';
 
 function UpdateVacancy() {
   const { goBack } = useNavigation();
@@ -31,6 +34,14 @@ function UpdateVacancy() {
   const emailRef = createRef<TextInput>();
   const phoneRef = createRef<TextInput>();
   const remunerationRef = createRef<TextInput>();
+
+  const [remunerationIsEnabled, setRemunerationIsEnabled] = useState(false);
+  const [representsIsEnabled, setRepresentsIsEnabled] = useState(false);
+
+  const toggleRemunerationSwitch = () =>
+    setRemunerationIsEnabled(previousState => !previousState);
+  const toggleRepresentsSwitch = () =>
+    setRepresentsIsEnabled(previousState => !previousState);
 
   const maskPhone = (value: string) => {
     value = value.replace(/\D/g, '');
@@ -51,9 +62,10 @@ function UpdateVacancy() {
     },
     [goBack],
   );
+
   return (
     <Container>
-      <Logo>JobFinder - Atualizar</Logo>
+      <Logo>Atualizar Vaga</Logo>
 
       <Formik
         initialValues={{
@@ -65,6 +77,7 @@ function UpdateVacancy() {
           state: '',
           city: '',
           type: '',
+          represents: '',
           category: '',
         }}
         onSubmit={values => handleUpdateVacancy(values)}
@@ -84,7 +97,7 @@ function UpdateVacancy() {
             ref={scrollRef}
           >
             <Input
-              placeholder="Titulo"
+              placeholder="Titulo da vaga"
               icon="address-card"
               returnKeyType="next"
               keyboardType="default"
@@ -98,7 +111,7 @@ function UpdateVacancy() {
 
             <Input
               reference={descriptionRef}
-              placeholder="Descrição"
+              placeholder="Descrição da vaga"
               multiline
               icon="file"
               returnKeyType="next"
@@ -151,24 +164,6 @@ function UpdateVacancy() {
               onFocus={() =>
                 scrollRef.current?.scrollTo({
                   y: hp(24),
-                  animated: true,
-                })
-              }
-            />
-            <Input
-              reference={remunerationRef}
-              placeholder="Remuneração"
-              icon="money"
-              returnKeyType="next"
-              keyboardType="number-pad"
-              autoCorrect={false}
-              onChangeText={text => setFieldValue('remuneration', text)}
-              onBlur={handleBlur('remuneration')}
-              value={values.remuneration}
-              error={touched.remuneration && errors.remuneration}
-              onFocus={() =>
-                scrollRef.current?.scrollTo({
-                  y: hp(32),
                   animated: true,
                 })
               }
@@ -241,6 +236,66 @@ function UpdateVacancy() {
               </Error>
             ) : (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
+            )}
+
+            <SwitchContainer>
+              <SwitchText>Salario a combinar?</SwitchText>
+
+              <Switch
+                trackColor={{ false: '#767577', true: '#767577' }}
+                thumbColor={remunerationIsEnabled ? color.primary : '#f4f3f4'}
+                onValueChange={toggleRemunerationSwitch}
+                value={remunerationIsEnabled}
+              />
+            </SwitchContainer>
+
+            {!remunerationIsEnabled && (
+              <Input
+                placeholder="Insira o salario ofertado"
+                icon="money"
+                returnKeyType="next"
+                keyboardType="number-pad"
+                autoCorrect={false}
+                onChangeText={text => {
+                  setFieldValue('remuneration', text);
+                }}
+                onBlur={handleBlur('remuneration')}
+                value={values.remuneration}
+                onFocus={() =>
+                  scrollRef.current?.scrollToEnd({
+                    animated: true,
+                  })
+                }
+              />
+            )}
+
+            <SwitchContainer>
+              <SwitchText>Representa alguma empresa?</SwitchText>
+
+              <Switch
+                trackColor={{ false: '#767577', true: '#767577' }}
+                thumbColor={representsIsEnabled ? color.primary : '#f4f3f4'}
+                onValueChange={toggleRepresentsSwitch}
+                value={representsIsEnabled}
+              />
+            </SwitchContainer>
+
+            {representsIsEnabled && (
+              <Input
+                placeholder="Representa qual empresa?"
+                icon="building"
+                autoCorrect={false}
+                onChangeText={text => {
+                  setFieldValue('represents', text);
+                }}
+                onBlur={handleBlur('represents')}
+                value={values.represents}
+                onFocus={() =>
+                  scrollRef.current?.scrollToEnd({
+                    animated: true,
+                  })
+                }
+              />
             )}
 
             <Button activeOpacity={0.8} onPress={() => handleSubmit()}>

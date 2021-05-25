@@ -50,3 +50,16 @@ export const Error = styled.Text`
   font-size: ${wp(3)}px;
   margin-bottom: ${hp(2)}px;
 `;
+export const SwitchContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 85%;
+  margin-bottom: ${hp(2)}px;
+`;
+export const SwitchText = styled.Text`
+  font-family: ${font.regular};
+  font-size: ${wp(4)}px;
+  color: ${color.text.primary};
+  text-align: center;
+`;

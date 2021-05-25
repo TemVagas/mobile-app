@@ -137,3 +137,11 @@ export const CardList = styled(FlatList as new () => FlatList<ItemsProps>)`
 export const Separator = styled.View`
   height: ${hp(2)}px;
 `;
+export const ModalizeContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin: ${hp(4)}px 0px;
+  color: ${color.background};
+`;
+export const ContactButton = styled.TouchableOpacity``;

@@ -101,17 +101,17 @@ function SignIn() {
               value={values.email}
               error={touched.email && errors.email}
             />
-
+            {console.log(passwordIsVisible)}
             <Input
               reference={passRef}
-              placeholder="Senha"
               icon="lock"
+              placeholder="Senha"
               secureTextEntry={passwordIsVisible}
-              passwordIsVisible={passwordIsVisible}
               setPasswordIsVisible={setPasswordIsVisible}
+              passwordIsVisible={passwordIsVisible}
               onSubmitEditing={() => handleSubmit()}
               returnKeyType="done"
-              keyboardType="visible-password"
+              keyboardType="default"
               autoCorrect={false}
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}

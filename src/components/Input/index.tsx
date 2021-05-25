@@ -15,9 +15,9 @@ import {
 export interface InputProps extends TextInputProps {
   passwordIsVisible: boolean;
   setPasswordIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  reference: React.Ref<TextInput> | undefined;
-  icon: string;
   error: string | undefined | boolean;
+  icon: string;
+  reference: React.Ref<TextInput> | undefined;
 }
 
 function Input({

@@ -259,7 +259,7 @@ function SignUp() {
                 passwordIsVisible={passwordIsVisible}
                 setPasswordIsVisible={setPasswordIsVisible}
                 returnKeyType="done"
-                keyboardType="visible-password"
+                keyboardType="default"
                 autoCorrect={false}
                 onChangeText={handleChange('password')}
                 onBlur={handleBlur('password')}

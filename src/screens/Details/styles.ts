@@ -20,7 +20,14 @@ export const HeaderContainer = styled.View`
   background-color: ${color.primary};
 `;
 export const GoBackButton = styled.TouchableOpacity`
-  width: 100%;
+  flex: 1;
+  margin-left: ${wp(4)}px;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+`;
+export const FavoriteButton = styled.TouchableOpacity`
+  flex: 0.3;
   margin-left: ${wp(4)}px;
   align-items: center;
   flex-direction: row;

@@ -3,6 +3,8 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Animated } from 'react-native';
 import { Modalize } from 'react-native-modalize';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { FontAwesome } from '@expo/vector-icons';
 
 import {
   SafeContainer,
@@ -35,6 +37,7 @@ import {
   ModalizeButtonContainer,
   ModalizeContainer,
   ModalizeTitle,
+  FavoriteButton,
 } from './styles';
 
 import { useFirstSteps } from '../../contexts/steps';
@@ -75,6 +78,17 @@ function Profile() {
           resizeMode="cover"
         />
       </Header>
+
+      <FavoriteButton onPress={() => handleNavigate('Favorites')}>
+        <Recolocation>Favoritos</Recolocation>
+        <FontAwesome
+          name="bookmark"
+          color={color.primary}
+          size={26}
+          style={{ marginRight: wp(2) }}
+        />
+      </FavoriteButton>
+
       <ButtonContainer>
         <Button onPress={() => excludeAccountRef.current?.open()}>
           <ButtonText>Excluir conta</ButtonText>
@@ -83,6 +97,7 @@ function Profile() {
           <ButtonText>Sair</ButtonText>
         </Button>
       </ButtonContainer>
+
       <CardContainer>
         <Card onPress={() => handleNavigate('AddVacancy')}>
           <CardImage source={AddVacancyImg} resizeMode="stretch" />
@@ -130,7 +145,6 @@ function Profile() {
           </VacancyInfo>
         </Vacancy>
       </Swipeable>
-
       <Modalize ref={excludeAccountRef} adjustToContentHeight>
         <ModalizeContainer>
           <ModalizeTitle>
@@ -146,7 +160,6 @@ function Profile() {
           </ModalizeButtonContainer>
         </ModalizeContainer>
       </Modalize>
-
       <Modalize ref={signOutRef} adjustToContentHeight>
         <ModalizeContainer>
           <ModalizeTitle>
@@ -162,7 +175,6 @@ function Profile() {
           </ModalizeButtonContainer>
         </ModalizeContainer>
       </Modalize>
-
       <Modalize ref={removeVacancyRef} adjustToContentHeight>
         <ModalizeContainer>
           <ModalizeTitle>

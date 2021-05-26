@@ -31,6 +31,7 @@ import {
   Separator,
   ModalizeContainer,
   ContactButton,
+  FavoriteButton,
 } from './styles';
 
 const infoCard = [
@@ -75,6 +76,9 @@ function VacancyDetails() {
             />
             <Title>Voltar</Title>
           </GoBackButton>
+          <FavoriteButton>
+            <FontAwesome name="bookmark" color={color.background} size={24} />
+          </FavoriteButton>
         </Header>
       </HeaderContainer>
       <Content>

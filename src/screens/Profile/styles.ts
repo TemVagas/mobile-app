@@ -24,6 +24,12 @@ export const TextContainer = styled.View`
   align-items: flex-start;
   justify-content: center;
 `;
+export const FavoriteButton = styled.TouchableOpacity`
+  flex-direction: row;
+  margin: 0px ${wp(4)}px ${hp(1)}px;
+  align-items: center;
+  justify-content: space-between;
+`;
 export const Text = styled.Text`
   font-family: ${font.regular};
   font-size: ${wp(6)}px;

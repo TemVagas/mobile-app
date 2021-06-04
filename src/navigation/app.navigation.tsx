@@ -3,14 +3,19 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
+import { color as colors, font } from '../constants/index';
+
 import JobsNavigation from './jobs.navigation';
 import AuthNavigation from './auth.navigation';
+import UserNavigation from './user.navigation';
 
-import { color as colors, font } from '../constants';
+import { useAuth } from '../contexts/auth';
 
 const Tab = createBottomTabNavigator();
 
 function AppNavigation() {
+  const { signed } = useAuth();
+
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -39,9 +44,10 @@ function AppNavigation() {
           ),
         }}
       />
+
       <Tab.Screen
         name="SignIn"
-        component={AuthNavigation}
+        component={signed ? UserNavigation : AuthNavigation}
         options={{
           title: 'Entrar',
           tabBarIcon: ({ color, focused }) => (

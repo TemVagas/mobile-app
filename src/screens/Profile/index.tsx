@@ -6,6 +6,8 @@ import { Modalize } from 'react-native-modalize';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { FontAwesome } from '@expo/vector-icons';
 
+import { useAuth } from '../../contexts/auth';
+
 import {
   SafeContainer,
   Avatar,
@@ -48,8 +50,9 @@ import AddVacancyImg from '../../assets/add-vacancy.png';
 import UpdateProfile from '../../assets/update-profile.png';
 
 function Profile() {
-  const { goBack, navigate } = useNavigation();
+  const { navigate } = useNavigation();
   const { removeSteps } = useFirstSteps();
+  const { signOut, data } = useAuth();
 
   const signOutRef = useRef<Modalize>(null);
   const excludeAccountRef = useRef<Modalize>(null);
@@ -71,7 +74,7 @@ function Profile() {
       <Header>
         <TextContainer>
           <Text>Olá,</Text>
-          <User>Usuário</User>
+          <User>{data?.user.name}</User>
         </TextContainer>
         <Avatar
           source={{ uri: 'https://picsum.photos/200' }}
@@ -169,7 +172,7 @@ function Profile() {
             <CancelButton onPress={() => signOutRef.current?.close()}>
               <CancelTextButton>Cancelar</CancelTextButton>
             </CancelButton>
-            <ConfirmButton onPress={goBack}>
+            <ConfirmButton onPress={() => signOut()}>
               <ConfirmTextButton>Sim</ConfirmTextButton>
             </ConfirmButton>
           </ModalizeButtonContainer>

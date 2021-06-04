@@ -94,7 +94,7 @@ export const Error = styled.Text`
   margin-bottom: ${hp(2)}px;
 `;
 export const Select = styled(Picker)`
-  height: ${hp(5)};
+  height: ${hp(5)}px;
   width: 90%;
 `;
 export const CreateCurriculum = styled.TouchableOpacity`

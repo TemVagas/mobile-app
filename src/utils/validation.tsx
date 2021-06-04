@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 export const SignInValidateShape = Yup.object().shape({
-  email: Yup.string()
+  username: Yup.string()
     .email('Formato de email inválido')
     .required('Email é um campo obrigatório'),
   password: Yup.string()

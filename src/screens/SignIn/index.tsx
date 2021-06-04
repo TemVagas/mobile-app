@@ -9,7 +9,10 @@ import { Keyboard, ScrollView, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 
+import { Modalize } from 'react-native-modalize';
 import SignInIMG from '../../assets/signin.png';
+
+import { useAuth } from '../../contexts/auth';
 
 import {
   Container,
@@ -20,6 +23,7 @@ import {
   SignUpText,
   SignUpContainer,
   SignUpButtonText,
+  ModalizeContainer,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -27,12 +31,14 @@ import { SignInValidateShape } from '../../utils/validation';
 
 function SignIn() {
   const { navigate } = useNavigation();
+  const { signIn } = useAuth();
 
   const passRef = createRef<TextInput>();
-
   const scrollRef = useRef<ScrollView>();
+  const modalizeRef = useRef<Modalize>(null);
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleNavigate = useCallback(
     route => {
@@ -49,10 +55,17 @@ function SignIn() {
 
   const handleSignIn = useCallback(
     async values => {
-      console.log(values);
-      navigate('Profile');
+      const { error: errorSignIn, message: messageSignIn } = await signIn(
+        values.username.toLowerCase(),
+        values.password.toLowerCase(),
+      );
+
+      if (errorSignIn && messageSignIn) {
+        setErrorMessage(messageSignIn);
+        modalizeRef.current?.open();
+      }
     },
-    [navigate],
+    [signIn],
   );
 
   useEffect(() => {
@@ -74,7 +87,7 @@ function SignIn() {
       <Image source={SignInIMG} />
       <Formik
         initialValues={{
-          email: '',
+          username: '',
           password: '',
         }}
         onSubmit={values => handleSignIn(values)}
@@ -96,10 +109,10 @@ function SignIn() {
               returnKeyType="next"
               keyboardType="email-address"
               autoCorrect={false}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-              error={touched.email && errors.email}
+              onChangeText={handleChange('username')}
+              onBlur={handleBlur('username')}
+              value={values.username}
+              error={touched.username && errors.username}
             />
             <Input
               reference={passRef}
@@ -131,6 +144,12 @@ function SignIn() {
           <SignUpButtonText>CADASTRE-SE</SignUpButtonText>
         </SimpleButton>
       </SignUpContainer>
+      <Modalize ref={modalizeRef} adjustToContentHeight>
+        <ModalizeContainer>
+          <SignUpButtonText>Erro</SignUpButtonText>
+          <SignUpText>{errorMessage}</SignUpText>
+        </ModalizeContainer>
+      </Modalize>
     </Container>
   );
 }

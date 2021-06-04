@@ -80,9 +80,9 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signOut = async () => {
-    await AsyncStorage.clear().then(() => {
-      setData(null);
-    });
+    await AsyncStorage.removeItem('@JobFinder:user');
+    await AsyncStorage.removeItem('@JobFinder:token');
+    setData(null);
   };
 
   return (

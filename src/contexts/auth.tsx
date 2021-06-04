@@ -12,17 +12,12 @@ import api from '../services/api';
 
 interface AuthContextData {
   signed: boolean;
-  data: DataProps | null;
+  data: UserProps | null;
   signIn(
     username: string,
     password: string,
   ): Promise<{ error: boolean; message?: string }>;
   signOut(): void;
-}
-
-interface DataProps {
-  user: UserProps;
-  token: string;
 }
 
 interface UserProps {
@@ -36,20 +31,20 @@ interface UserProps {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const [data, setData] = useState<DataProps | null>(null);
+  const [data, setData] = useState<UserProps | null>(null);
 
   useEffect(() => {
     async function loadStoragedData() {
-      const [token, userData] = await AsyncStorage.multiGet([
+      const [token, user] = await AsyncStorage.multiGet([
         '@JobFinder:token',
         '@JobFinder:user',
       ]);
 
       setData(null);
 
-      if (token[1] && userData[1]) {
+      if (token[1] && user[1]) {
         api.defaults.headers.Authorization = `Bearer ${token[1]}`;
-        setData(JSON.parse(userData[1]));
+        setData(JSON.parse(user[1]));
       }
     }
 
@@ -71,7 +66,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       ]);
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
-      setData(response.data);
+      setData(user);
 
       return { error: false };
     } catch (err) {

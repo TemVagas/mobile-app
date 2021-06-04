@@ -74,7 +74,7 @@ function Profile() {
       <Header>
         <TextContainer>
           <Text>Olá,</Text>
-          <User>{data?.user.name}</User>
+          <User>{data?.name}</User>
         </TextContainer>
         <Avatar
           source={{ uri: 'https://picsum.photos/200' }}

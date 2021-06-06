@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { Animated } from 'react-native';
+import { Animated, ToastAndroid } from 'react-native';
 import { Modalize } from 'react-native-modalize';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { FontAwesome } from '@expo/vector-icons';
@@ -48,6 +48,7 @@ import { Icon } from '../Home/styles';
 
 import AddVacancyImg from '../../assets/add-vacancy.png';
 import UpdateProfile from '../../assets/update-profile.png';
+import api from '../../services/api';
 
 function Profile() {
   const { navigate } = useNavigation();
@@ -58,7 +59,9 @@ function Profile() {
   const excludeAccountRef = useRef<Modalize>(null);
   const removeVacancyRef = useRef<Modalize>(null);
 
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled, setIsEnabled] = useState<boolean | null>(
+    data?.is_recolocation,
+  );
 
   const toggleSwitch = () => setIsEnabled(state => !state);
 
@@ -68,6 +71,33 @@ function Profile() {
     },
     [navigate],
   );
+
+  useEffect(() => {
+    async function isRecolocation() {
+      if (isEnabled) {
+        ToastAndroid.show('Anunciando recolocação.', ToastAndroid.SHORT);
+        try {
+          await api.patch(`/accounts/${data?.user_id}/recolocation`, {});
+        } catch (error) {
+          ToastAndroid.show(
+            'Houve um erro em anunciar recolocação.',
+            ToastAndroid.SHORT,
+          );
+        }
+      } else {
+        ToastAndroid.show('Removendo recolocação.', ToastAndroid.SHORT);
+        try {
+          await api.patch(`/accounts/${data?.user_id}/recolocation`, {});
+        } catch (error) {
+          ToastAndroid.show(
+            'Houve um erro em remover recolocação.',
+            ToastAndroid.SHORT,
+          );
+        }
+      }
+    }
+    isRecolocation();
+  }, [isEnabled, data]);
 
   return (
     <SafeContainer>

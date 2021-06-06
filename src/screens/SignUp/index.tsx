@@ -411,12 +411,6 @@ function SignUp() {
                 }}
               >
                 <Select.Item label="Selecione um estado" value="" />
-                {states.map(state => (
-                  <Select.Item
-                    label={`${state.nome} - ${state.sigla}`}
-                    value={state}
-                  />
-                ))}
               </Select>
               {errors.state && touched.state ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>

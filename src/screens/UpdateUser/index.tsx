@@ -9,7 +9,14 @@ import React, {
   useEffect,
 } from 'react';
 
-import { TextInput, ScrollView, Platform, Alert, Linking } from 'react-native';
+import {
+  TextInput,
+  ScrollView,
+  Platform,
+  Alert,
+  Linking,
+  ToastAndroid,
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Formik } from 'formik';
@@ -17,6 +24,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
+import axios from 'axios';
 import { color } from '../../constants';
 import { UpdateUserValidateShape } from '../../utils/validation';
 
@@ -40,22 +48,42 @@ import {
 } from './styles';
 
 import Input from '../../components/Input';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/auth';
+
+interface CategoriesProps {
+  id: string;
+  name: string;
+}
+
+interface StatesProps {
+  id: string;
+  sigla: string;
+  nome: string;
+}
+
+interface CitiesProps {
+  id: number;
+  nome: string;
+}
 
 function UpdateUser() {
   const { goBack, navigate } = useNavigation();
 
+  const { data } = useAuth();
+
   const scrollRef = useRef<ScrollView>();
 
   const lastNameRef = createRef<TextInput>();
-  const passRef = createRef<TextInput>();
   const emailRef = createRef<TextInput>();
   const describeRef = createRef<TextInput>();
   const phoneRef = createRef<TextInput>();
 
   const [image, setImage] = useState<string>();
   const [curriculum, setCurriculum] = useState<string>();
-
-  const [passwordIsVisible, setPasswordIsVisible] = useState(true);
+  const [categories, setCategories] = useState<CategoriesProps[]>([]);
+  const [states, setStates] = useState<StatesProps[]>([]);
+  const [cities, setCities] = useState<CitiesProps[]>([]);
 
   const pickImage = useCallback(async setFieldValue => {
     await ImagePicker.launchImageLibraryAsync({
@@ -95,10 +123,29 @@ function UpdateUser() {
 
   const handleUpdateUser = useCallback(
     async values => {
-      console.log(values);
-      navigate('Profile');
+      try {
+        const updateUser = {
+          name: `${values.firstname} ${values.lastname}`,
+          email: values.email,
+          description: values.about,
+          phone_number: values.phone,
+          category_id: values.interests_id,
+          city_name: values.city,
+          state_name: values.state,
+        };
+
+        await api.post(`accounts/${data?.user_id}`, { updateUser });
+        ToastAndroid.show('Perfil atualizado com sucesso.', ToastAndroid.SHORT);
+
+        navigate('Profile');
+      } catch {
+        ToastAndroid.show(
+          'Houve um erro ao atualizar perfil.',
+          ToastAndroid.SHORT,
+        );
+      }
     },
-    [navigate],
+    [navigate, data],
   );
 
   const LinkingToCreateCurriculum = useCallback(async () => {
@@ -118,6 +165,31 @@ function UpdateUser() {
         }
       }
     })();
+  }, []);
+
+  const loadCities = useCallback(async state => {
+    const response = await axios.get(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state.sigla}/distritos`,
+    );
+    setCities(response.data);
+  }, []);
+
+  useEffect(() => {
+    async function loadCategories() {
+      const response = await api.get('categories');
+      setCategories(response.data);
+    }
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    async function loadStates() {
+      const response = await axios.get(
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados',
+      );
+      setStates(response.data);
+    }
+    loadStates();
   }, []);
 
   return (
@@ -142,9 +214,9 @@ function UpdateUser() {
             firstname: '',
             lastname: '',
             about: '',
+            interests_id: '',
             interests: '',
             email: '',
-            password: '',
             phone: '',
             state: '',
             city: '',
@@ -186,6 +258,11 @@ function UpdateUser() {
                 </ButtonCamera>
               </Content>
               {errors.image && <Error>{errors.image}</Error>}
+
+              <CreateCurriculum onPress={() => navigate('ChangePassword')}>
+                <CreateCurriculumText>Alterar Senha</CreateCurriculumText>
+              </CreateCurriculum>
+
               <Input
                 placeholder="Nome"
                 icon="address-book"
@@ -240,30 +317,9 @@ function UpdateUser() {
                     animated: true,
                   })
                 }
-                onSubmitEditing={() => passRef.current?.focus()}
-              />
-              <Input
-                reference={passRef}
-                placeholder="Nova senha"
-                icon="lock"
-                secureTextEntry={passwordIsVisible}
-                passwordIsVisible={passwordIsVisible}
-                setPasswordIsVisible={setPasswordIsVisible}
-                returnKeyType="done"
-                keyboardType="default"
-                autoCorrect={false}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-                error={touched.password && errors.password}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(65),
-                    animated: true,
-                  })
-                }
                 onSubmitEditing={() => phoneRef.current?.focus()}
               />
+
               <Input
                 reference={phoneRef}
                 placeholder="Telefone"
@@ -305,15 +361,15 @@ function UpdateUser() {
               />
 
               <Select
-                onValueChange={itemValue =>
-                  setFieldValue('interests', itemValue)
-                }
+                onValueChange={(itemValue: any) => {
+                  setFieldValue('interests', itemValue.name);
+                  setFieldValue('interests_id', itemValue.id);
+                }}
               >
                 <Select.Item label="Declare sua area de interesse" value="" />
-                <Select.Item label="Medico" value="1" />
-                <Select.Item label="Desenvolvimento de Software" value="2" />
-                <Select.Item label="Nutricionista" value="3" />
-                <Select.Item label="Engenheiro Eletrico" value="4" />
+                {categories.map(category => (
+                  <Select.Item label={category.name} value={category} />
+                ))}
               </Select>
               {errors.interests && touched.interests ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -324,13 +380,18 @@ function UpdateUser() {
               )}
 
               <Select
-                onValueChange={itemValue => setFieldValue('state', itemValue)}
+                onValueChange={itemValue => {
+                  setFieldValue('state', itemValue.nome);
+                  loadCities(itemValue);
+                }}
               >
                 <Select.Item label="Selecione um estado" value="" />
-                <Select.Item label="Piaui" value="1" />
-                <Select.Item label="São Paulo" value="2" />
-                <Select.Item label="Fortaleza" value="3" />
-                <Select.Item label="Pernambuco" value="4" />
+                {states.map(state => (
+                  <Select.Item
+                    label={`${state.nome} - ${state.sigla}`}
+                    value={state}
+                  />
+                ))}
               </Select>
               {errors.state && touched.state ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -344,10 +405,9 @@ function UpdateUser() {
                 onValueChange={itemValue => setFieldValue('city', itemValue)}
               >
                 <Select.Item label="Selecione uma cidade" value="" />
-                <Select.Item label="Picos" value="1" />
-                <Select.Item label="Araripina" value="2" />
-                <Select.Item label="Crato" value="3" />
-                <Select.Item label="Teresina" value="4" />
+                {cities.map(city => (
+                  <Select.Item label={city.nome} value={city.nome} />
+                ))}
               </Select>
               {errors.city && touched.city ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>

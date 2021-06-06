@@ -9,6 +9,7 @@ import Favorites from '../screens/Favorites';
 import AddVacancy from '../screens/AddVacancy';
 import UpdateUser from '../screens/UpdateUser';
 import UpdateVacancy from '../screens/UpdateVacancy';
+import ChangePassword from '../screens/ChangePassword';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const UserNavigation: React.FC = () => {
       <Stack.Screen name="AddVacancy" component={AddVacancy} />
       <Stack.Screen name="UpdateUser" component={UpdateUser} />
       <Stack.Screen name="UpdateVacancy" component={UpdateVacancy} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
     </Stack.Navigator>
   );
 };

@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 export const SignInValidateShape = Yup.object().shape({
-  username: Yup.string()
+  email: Yup.string()
     .email('Formato de email inválido')
     .required('Email é um campo obrigatório'),
   password: Yup.string()
@@ -39,9 +39,6 @@ export const UpdateUserValidateShape = Yup.object().shape({
   phone: Yup.string()
     .min(11, 'O número de telefone deve conter 11 caracteres')
     .required('Telefone é um campo obrigatório'),
-  password: Yup.string()
-    .min(6, 'A senha deve conter no minimo 6 caracteres')
-    .required('Senha é um campo obrigatório'),
   state: Yup.string().required('É necessário selecionar um estado'),
   city: Yup.string().required('É necessário selecionar uma cidade'),
 });
@@ -76,4 +73,13 @@ export const UpdateVacancyValidateShape = Yup.object().shape({
   city: Yup.string().required('É necessário selecionar uma cidade'),
   type: Yup.string().required('É nesessário declarar um tipo'),
   category: Yup.string().required('É nesessário declarar uma categoria'),
+});
+
+export const ChangePasswordValidateShape = Yup.object().shape({
+  new_password: Yup.string()
+    .min(6, 'O campo nova senha deve conter no minimo 6 caracteres')
+    .required('Nova senha é um campo obrigatório'),
+  old_password: Yup.string()
+    .min(6, 'O campo sua senha deve conter no minimo 6 caracteres')
+    .required('Sua senha é um campo obrigatório'),
 });

@@ -75,8 +75,8 @@ function Profile() {
         <TextContainer>
           <Text>Olá,</Text>
           <User>
-            {data?.name && data?.name.length > 15
-              ? `${data?.name.substring(0, 15)}...`
+            {data?.name && data?.name.length > 12
+              ? `${data?.name.substring(0, 12)}...`
               : data?.name}
           </User>
         </TextContainer>

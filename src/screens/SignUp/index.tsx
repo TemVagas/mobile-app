@@ -10,7 +10,14 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Alert, Platform, ScrollView, TextInput, Linking } from 'react-native';
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  TextInput,
+  Linking,
+  ToastAndroid,
+} from 'react-native';
 import { Formik } from 'formik';
 import {
   heightPercentageToDP as hp,
@@ -104,20 +111,27 @@ function SignUp() {
 
   const handleSignUp = useCallback(
     async values => {
-      const data = {
-        name: `${values.firstname} ${values.lastname}`,
-        email: values.email,
-        description: values.about,
-        password: values.password,
-        phone_number: values.phone,
-        category_id: values.interests_id,
-        city: values.city,
-        state: values.state,
-      };
+      try {
+        const data = {
+          name: `${values.firstname} ${values.lastname}`,
+          email: values.email,
+          description: values.about,
+          password: values.password,
+          phone_number: values.phone,
+          category_id: values.interests_id,
+          city_name: values.city,
+          state_name: values.state,
+        };
 
-      await api.post('accounts', { data });
-
-      navigate('SignIn');
+        await api.post('accounts', { data });
+        ToastAndroid.show(
+          'Cadastro concluido com sucesso.',
+          ToastAndroid.SHORT,
+        );
+        navigate('SignIn');
+      } catch {
+        ToastAndroid.show('Houve um erro ao cadastrar-se.', ToastAndroid.SHORT);
+      }
     },
     [navigate],
   );

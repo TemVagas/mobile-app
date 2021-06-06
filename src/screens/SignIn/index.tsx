@@ -5,11 +5,10 @@ import React, {
   createRef,
   useCallback,
 } from 'react';
-import { Keyboard, ScrollView, TextInput } from 'react-native';
+import { Keyboard, ScrollView, TextInput, ToastAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 
-import { Modalize } from 'react-native-modalize';
 import SignInIMG from '../../assets/signin.png';
 
 import { useAuth } from '../../contexts/auth';
@@ -23,7 +22,6 @@ import {
   SignUpText,
   SignUpContainer,
   SignUpButtonText,
-  ModalizeContainer,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -35,10 +33,8 @@ function SignIn() {
 
   const passRef = createRef<TextInput>();
   const scrollRef = useRef<ScrollView>();
-  const modalizeRef = useRef<Modalize>(null);
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const handleNavigate = useCallback(
     route => {
@@ -55,14 +51,15 @@ function SignIn() {
 
   const handleSignIn = useCallback(
     async values => {
+      ToastAndroid.show('Validando dados inseridos.', ToastAndroid.SHORT);
+
       const { error: errorSignIn, message: messageSignIn } = await signIn(
-        values.username.toLowerCase(),
+        values.email.toLowerCase(),
         values.password.toLowerCase(),
       );
 
       if (errorSignIn && messageSignIn) {
-        setErrorMessage(messageSignIn);
-        modalizeRef.current?.open();
+        ToastAndroid.show(messageSignIn, ToastAndroid.SHORT);
       }
     },
     [signIn],
@@ -87,7 +84,7 @@ function SignIn() {
       <Image source={SignInIMG} />
       <Formik
         initialValues={{
-          username: '',
+          email: '',
           password: '',
         }}
         onSubmit={values => handleSignIn(values)}
@@ -109,10 +106,10 @@ function SignIn() {
               returnKeyType="next"
               keyboardType="email-address"
               autoCorrect={false}
-              onChangeText={handleChange('username')}
-              onBlur={handleBlur('username')}
-              value={values.username}
-              error={touched.username && errors.username}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              value={values.email}
+              error={touched.email && errors.email}
             />
             <Input
               reference={passRef}
@@ -144,12 +141,6 @@ function SignIn() {
           <SignUpButtonText>CADASTRE-SE</SignUpButtonText>
         </SimpleButton>
       </SignUpContainer>
-      <Modalize ref={modalizeRef} adjustToContentHeight>
-        <ModalizeContainer>
-          <SignUpButtonText>Erro</SignUpButtonText>
-          <SignUpText>{errorMessage}</SignUpText>
-        </ModalizeContainer>
-      </Modalize>
     </Container>
   );
 }

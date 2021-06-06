@@ -14,14 +14,14 @@ interface AuthContextData {
   signed: boolean;
   data: UserProps | null;
   signIn(
-    username: string,
+    email: string,
     password: string,
   ): Promise<{ error: boolean; message?: string }>;
   signOut(): void;
 }
 
 interface UserProps {
-  username: string;
+  user_id: string;
   description: string;
   email: string;
   name: string;
@@ -51,10 +51,10 @@ export const AuthProvider: React.FC = ({ children }) => {
     loadStoragedData();
   }, []);
 
-  const signIn = useCallback(async (username, password) => {
+  const signIn = useCallback(async (email, password) => {
     try {
       const response = await api.post('sessions', {
-        username,
+        email,
         password,
       });
 
@@ -70,7 +70,11 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       return { error: false };
     } catch (err) {
-      return { error: true, message: 'Houve um erro ao efetuar login' };
+      return {
+        error: true,
+        message:
+          'Houve um erro ao efetuar login, verifique seus dados e sua conexão com a internet.',
+      };
     }
   }, []);
 

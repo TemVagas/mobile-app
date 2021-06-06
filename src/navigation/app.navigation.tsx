@@ -14,7 +14,12 @@ import { useAuth } from '../contexts/auth';
 const Tab = createBottomTabNavigator();
 
 function AppNavigation() {
-  const { signed } = useAuth();
+  const { signed, data } = useAuth();
+
+  const welcome =
+    `Olá, ${data?.name}`.length > 13
+      ? `Olá, ${data?.name.substring(0, 13)}...`
+      : `Olá, ${data?.name}`;
 
   return (
     <Tab.Navigator
@@ -49,7 +54,7 @@ function AppNavigation() {
         name="SignIn"
         component={signed ? UserNavigation : AuthNavigation}
         options={{
-          title: 'Entrar',
+          title: signed ? welcome : 'Entrar',
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name="user-circle"

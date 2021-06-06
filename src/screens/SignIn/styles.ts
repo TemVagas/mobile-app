@@ -63,9 +63,3 @@ export const SimpleButton = styled(RectButton)`
   align-items: center;
   justify-content: center;
 `;
-export const ModalizeContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  margin: ${hp(4)}px 0px;
-  color: ${color.background};
-`;

@@ -17,6 +17,7 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 
+import axios from 'axios';
 import {
   Container,
   Form,
@@ -41,11 +42,31 @@ import Input from '../../components/Input';
 import { SignUpValidateShape } from '../../utils/validation';
 
 import { color } from '../../constants';
+import api from '../../services/api';
+
+interface CategoriesProps {
+  id: string;
+  name: string;
+}
+
+interface StatesProps {
+  id: string;
+  sigla: string;
+  nome: string;
+}
+
+interface CitiesProps {
+  id: number;
+  nome: string;
+}
 
 function SignUp() {
   const { goBack, navigate } = useNavigation();
 
   const [image, setImage] = useState<string>();
+  const [categories, setCategories] = useState<CategoriesProps[]>([]);
+  const [states, setStates] = useState<StatesProps[]>([]);
+  const [cities, setCities] = useState<CitiesProps[]>([]);
   const [curriculum, setCurriculum] = useState<string>();
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
 
@@ -83,8 +104,20 @@ function SignUp() {
 
   const handleSignUp = useCallback(
     async values => {
-      console.log(values);
-      navigate('Profile');
+      const data = {
+        name: `${values.firstname} ${values.lastname}`,
+        email: values.email,
+        description: values.about,
+        password: values.password,
+        phone_number: values.phone,
+        category_id: values.interests_id,
+        city: values.city,
+        state: values.state,
+      };
+
+      await api.post('accounts', { data });
+
+      navigate('SignIn');
     },
     [navigate],
   );
@@ -120,6 +153,31 @@ function SignUp() {
     })();
   }, []);
 
+  const loadCities = useCallback(async state => {
+    const response = await axios.get(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state.sigla}/distritos`,
+    );
+    setCities(response.data);
+  }, []);
+
+  useEffect(() => {
+    async function loadCategories() {
+      const response = await api.get('categories');
+      setCategories(response.data);
+    }
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    async function loadStates() {
+      const response = await axios.get(
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados',
+      );
+      setStates(response.data);
+    }
+    loadStates();
+  }, []);
+
   return (
     <Container>
       <Form contentContainerStyle={{ alignItems: 'center' }} ref={scrollRef}>
@@ -141,6 +199,7 @@ function SignUp() {
             firstname: '',
             lastname: '',
             about: '',
+            interests_id: '',
             interests: '',
             email: '',
             password: '',
@@ -195,6 +254,7 @@ function SignUp() {
                 </ButtonCamera>
               </Content>
               {errors.image && <Error>{errors.image}</Error>}
+
               <Input
                 placeholder="Nome"
                 icon="address-book"
@@ -312,17 +372,16 @@ function SignUp() {
                   })
                 }
               />
-
               <Select
-                onValueChange={itemValue =>
-                  setFieldValue('interests', itemValue)
-                }
+                onValueChange={(itemValue: any) => {
+                  setFieldValue('interests', itemValue.name);
+                  setFieldValue('interests_id', itemValue.id);
+                }}
               >
                 <Select.Item label="Declare sua area de interesse" value="" />
-                <Select.Item label="Medico" value="1" />
-                <Select.Item label="Desenvolvimento de Software" value="2" />
-                <Select.Item label="Nutricionista" value="3" />
-                <Select.Item label="Engenheiro Eletrico" value="4" />
+                {categories.map(category => (
+                  <Select.Item label={category.name} value={category} />
+                ))}
               </Select>
               {errors.interests && touched.interests ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -333,13 +392,18 @@ function SignUp() {
               )}
 
               <Select
-                onValueChange={itemValue => setFieldValue('state', itemValue)}
+                onValueChange={itemValue => {
+                  setFieldValue('state', itemValue.nome);
+                  loadCities(itemValue);
+                }}
               >
                 <Select.Item label="Selecione um estado" value="" />
-                <Select.Item label="Piaui" value="1" />
-                <Select.Item label="São Paulo" value="2" />
-                <Select.Item label="Fortaleza" value="3" />
-                <Select.Item label="Pernambuco" value="4" />
+                {states.map(state => (
+                  <Select.Item
+                    label={`${state.nome} - ${state.sigla}`}
+                    value={state}
+                  />
+                ))}
               </Select>
               {errors.state && touched.state ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -353,10 +417,9 @@ function SignUp() {
                 onValueChange={itemValue => setFieldValue('city', itemValue)}
               >
                 <Select.Item label="Selecione uma cidade" value="" />
-                <Select.Item label="Picos" value="1" />
-                <Select.Item label="Araripina" value="2" />
-                <Select.Item label="Crato" value="3" />
-                <Select.Item label="Teresina" value="4" />
+                {cities.map(city => (
+                  <Select.Item label={city.nome} value={city.nome} />
+                ))}
               </Select>
               {errors.city && touched.city ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>

@@ -10,7 +10,7 @@ export const SignInValidateShape = Yup.object().shape({
 });
 
 export const SignUpValidateShape = Yup.object().shape({
-  image: Yup.string().min(6).required('Selecione uma foto de perfil'),
+  // image: Yup.string().min(6).required('Selecione uma foto de perfil'),
   firstname: Yup.string().required('Nome é um campo obrigatório'),
   lastname: Yup.string().required('Sobrenome é um campo obrigatório'),
   about: Yup.string().required('Este é um campo obrigatório'),

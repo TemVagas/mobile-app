@@ -74,7 +74,11 @@ function Profile() {
       <Header>
         <TextContainer>
           <Text>Olá,</Text>
-          <User>{data?.name}</User>
+          <User>
+            {data?.name && data?.name.length > 15
+              ? `${data?.name.substring(0, 15)}...`
+              : data?.name}
+          </User>
         </TextContainer>
         <Avatar
           source={{ uri: 'https://picsum.photos/200' }}

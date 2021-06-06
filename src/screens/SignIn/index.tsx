@@ -60,6 +60,8 @@ function SignIn() {
 
       if (errorSignIn && messageSignIn) {
         ToastAndroid.show(messageSignIn, ToastAndroid.SHORT);
+      } else {
+        ToastAndroid.show('Bem vindo.', ToastAndroid.SHORT);
       }
     },
     [signIn],

@@ -1,8 +1,14 @@
 /* eslint-disable no-param-reassign */
-import React, { createRef, useCallback, useRef, useState } from 'react';
+import React, {
+  createRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { ScrollView, TextInput, Switch } from 'react-native';
+import { ScrollView, TextInput, Switch, ToastAndroid } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -10,6 +16,7 @@ import {
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 
+import axios from 'axios';
 import {
   Container,
   Logo,
@@ -26,6 +33,23 @@ import { AddVacancyValidateShape } from '../../utils/validation';
 
 import Input from '../../components/Input';
 import { color } from '../../constants';
+import api from '../../services/api';
+
+interface CategoriesProps {
+  id: string;
+  name: string;
+}
+
+interface StatesProps {
+  id: string;
+  sigla: string;
+  nome: string;
+}
+
+interface CitiesProps {
+  id: number;
+  nome: string;
+}
 
 function AddVacancy() {
   const { goBack } = useNavigation();
@@ -39,6 +63,9 @@ function AddVacancy() {
 
   const [remunerationIsEnabled, setRemunerationIsEnabled] = useState(false);
   const [representsIsEnabled, setRepresentsIsEnabled] = useState(false);
+  const [categories, setCategories] = useState<CategoriesProps[]>([]);
+  const [states, setStates] = useState<StatesProps[]>([]);
+  const [cities, setCities] = useState<CitiesProps[]>([]);
 
   const toggleRemunerationSwitch = () =>
     setRemunerationIsEnabled(previousState => !previousState);
@@ -59,11 +86,56 @@ function AddVacancy() {
 
   const handleCreateVacancy = useCallback(
     async values => {
-      console.log(values);
-      goBack();
+      ToastAndroid.show('Anunciando vaga.', ToastAndroid.SHORT);
+      try {
+        await api.post('jobs', {
+          title: values.title,
+          description: values.description,
+          email: values.email,
+          phone_number: values.phone,
+          type: values.type,
+          category_id: values.category_id,
+          city_name: values.city,
+          state_name: values.state,
+          remuneration_value: Number(values.remuneration),
+          represents: values.represents,
+        });
+        goBack();
+        ToastAndroid.show('Vaga criada.', ToastAndroid.SHORT);
+      } catch (err) {
+        ToastAndroid.show(
+          'Houve um erro ao anunciar vaga.',
+          ToastAndroid.SHORT,
+        );
+      }
     },
     [goBack],
   );
+
+  const loadCities = useCallback(async state => {
+    const response = await axios.get(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state.sigla}/distritos`,
+    );
+    setCities(response.data);
+  }, []);
+
+  useEffect(() => {
+    async function loadCategories() {
+      const response = await api.get('categories');
+      setCategories(response.data);
+    }
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    async function loadStates() {
+      const response = await axios.get(
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados',
+      );
+      setStates(response.data);
+    }
+    loadStates();
+  }, []);
 
   return (
     <Container>
@@ -74,12 +146,13 @@ function AddVacancy() {
           description: '',
           email: '',
           phone: '',
-          remuneration: '',
+          remuneration: 0,
           state: '',
           city: '',
           type: '',
           represents: '',
           category: '',
+          category_id: '',
         }}
         onSubmit={values => handleCreateVacancy(values)}
         validationSchema={AddVacancyValidateShape}
@@ -174,11 +247,12 @@ function AddVacancy() {
               onValueChange={itemValue => setFieldValue('type', itemValue)}
             >
               <Select.Item label="Declare o tipo da vaga" value="" />
-              <Select.Item label="PJ" value="1" />
-              <Select.Item label="CLT" value="2" />
-              <Select.Item label="Traine" value="3" />
-              <Select.Item label="Estágio" value="4" />
-              <Select.Item label="Freelancer" value="5" />
+              <Select.Item label="PJ" value="PJ" />
+              <Select.Item label="CLT" value="CLT" />
+              <Select.Item label="Traine" value="Traine" />
+              <Select.Item label="Estágio" value="Estágio" />
+              <Select.Item label="Freelancer" value="Freelancer" />
+              <Select.Item label="Ajuda" value="Ajuda" />
             </Select>
             {errors.type && touched.type ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -189,13 +263,15 @@ function AddVacancy() {
             )}
 
             <Select
-              onValueChange={itemValue => setFieldValue('category', itemValue)}
+              onValueChange={(itemValue: any) => {
+                setFieldValue('category', itemValue.name);
+                setFieldValue('category_id', itemValue.id);
+              }}
             >
               <Select.Item label="Declare a categoria da vaga" value="" />
-              <Select.Item label="Medico" value="1" />
-              <Select.Item label="Desenvolvimento de Software" value="2" />
-              <Select.Item label="Nutricionista" value="3" />
-              <Select.Item label="Engenheiro Eletrico" value="4" />
+              {categories.map(category => (
+                <Select.Item label={category.name} value={category} />
+              ))}
             </Select>
             {errors.category && touched.category ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -206,13 +282,18 @@ function AddVacancy() {
             )}
 
             <Select
-              onValueChange={itemValue => setFieldValue('state', itemValue)}
+              onValueChange={itemValue => {
+                setFieldValue('state', itemValue.nome);
+                loadCities(itemValue);
+              }}
             >
               <Select.Item label="Selecione um estado" value="" />
-              <Select.Item label="Piaui" value="1" />
-              <Select.Item label="São Paulo" value="2" />
-              <Select.Item label="Fortaleza" value="3" />
-              <Select.Item label="Pernambuco" value="4" />
+              {states.map(state => (
+                <Select.Item
+                  label={`${state.nome} - ${state.sigla}`}
+                  value={state}
+                />
+              ))}
             </Select>
             {errors.state && touched.state ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -226,10 +307,9 @@ function AddVacancy() {
               onValueChange={itemValue => setFieldValue('city', itemValue)}
             >
               <Select.Item label="Selecione uma cidade" value="" />
-              <Select.Item label="Picos" value="1" />
-              <Select.Item label="Araripina" value="2" />
-              <Select.Item label="Crato" value="3" />
-              <Select.Item label="Teresina" value="4" />
+              {cities.map(city => (
+                <Select.Item label={city.nome} value={city.nome} />
+              ))}
             </Select>
             {errors.city && touched.city ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>

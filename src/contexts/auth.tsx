@@ -22,10 +22,34 @@ interface AuthContextData {
 
 interface UserProps {
   user_id: string;
+  avatar: string | null;
+  curriculum: string | null;
+  favorites_jobs: [];
+  is_active: boolean;
+  is_recolocation: boolean;
+  jobs: [];
   description: string;
   email: string;
   name: string;
   phone_number: string;
+  category: CategoryProps;
+  city: CityProps;
+}
+
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
+interface CityProps {
+  id: string;
+  name: string;
+  state: StateProps;
+}
+
+interface StateProps {
+  id: string;
+  name: string;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);

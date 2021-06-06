@@ -111,25 +111,24 @@ function SignUp() {
 
   const handleSignUp = useCallback(
     async values => {
+      ToastAndroid.show('Cadastrando usuário.', ToastAndroid.SHORT);
       try {
-        const data = {
+        await api.post('accounts', {
           name: `${values.firstname} ${values.lastname}`,
-          email: values.email,
+          email: values.email.toLowerCase(),
           description: values.about,
           password: values.password,
           phone_number: values.phone,
           category_id: values.interests_id,
           city_name: values.city,
           state_name: values.state,
-        };
-
-        await api.post('accounts', { data });
+        });
+        navigate('SingIn');
         ToastAndroid.show(
           'Cadastro concluido com sucesso.',
           ToastAndroid.SHORT,
         );
-        navigate('SignIn');
-      } catch {
+      } catch (err) {
         ToastAndroid.show('Houve um erro ao cadastrar-se.', ToastAndroid.SHORT);
       }
     },

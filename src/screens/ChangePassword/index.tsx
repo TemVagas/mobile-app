@@ -18,12 +18,10 @@ import {
 } from './styles';
 import Input from '../../components/Input';
 import { ChangePasswordValidateShape } from '../../utils/validation';
-import { useAuth } from '../../contexts/auth';
 import api from '../../services/api';
 
 function ChangePassword() {
   const { goBack, navigate } = useNavigation();
-  const { data } = useAuth();
 
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
   const [oldPasswordIsVisible, setOldPasswordIsVisible] = useState(true);
@@ -32,23 +30,22 @@ function ChangePassword() {
 
   const handleChangePassword = useCallback(
     async values => {
+      ToastAndroid.show('Alterando senha.', ToastAndroid.SHORT);
       try {
-        const changePassword = {
+        await api.patch('accounts/password', {
           new_password: values.new_password,
           old_password: values.old_password,
-        };
-
-        await api.patch(`accounts/${data?.user_id}`, { changePassword });
+        });
         ToastAndroid.show('Senha alterada com sucesso.', ToastAndroid.SHORT);
         navigate('Profile');
-      } catch {
+      } catch (error) {
         ToastAndroid.show(
           'Houve um erro ao alterar senha.',
           ToastAndroid.SHORT,
         );
       }
     },
-    [data, navigate],
+    [navigate],
   );
 
   return (
@@ -114,7 +111,7 @@ function ChangePassword() {
               />
 
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-                <ButtonText>Alterar senha</ButtonText>
+                <ButtonText>ALTERAR SENHA</ButtonText>
               </Button>
             </>
           )}

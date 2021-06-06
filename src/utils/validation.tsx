@@ -30,7 +30,7 @@ export const SignUpValidateShape = Yup.object().shape({
 
 export const UpdateUserValidateShape = Yup.object().shape({
   firstname: Yup.string().required('Nome é um campo obrigatório'),
-  lastname: Yup.string().required('Sobrenome é um campo obrigatório'),
+  // lastname: Yup.string().required('Sobrenome é um campo obrigatório'),
   about: Yup.string().required('Este é um campo obrigatório'),
   interests: Yup.string().required('É nesessário declarar algum interesse'),
   email: Yup.string()

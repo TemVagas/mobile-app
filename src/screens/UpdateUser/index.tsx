@@ -74,7 +74,6 @@ function UpdateUser() {
 
   const scrollRef = useRef<ScrollView>();
 
-  const lastNameRef = createRef<TextInput>();
   const emailRef = createRef<TextInput>();
   const describeRef = createRef<TextInput>();
   const phoneRef = createRef<TextInput>();
@@ -123,29 +122,40 @@ function UpdateUser() {
 
   const handleUpdateUser = useCallback(
     async values => {
+      ToastAndroid.show('Atualizando perfil.', ToastAndroid.SHORT);
+
       try {
-        const updateUser = {
-          name: `${values.firstname} ${values.lastname}`,
+        console.log({
+          name: values.firstname,
           email: values.email,
           description: values.about,
           phone_number: values.phone,
           category_id: values.interests_id,
           city_name: values.city,
           state_name: values.state,
-        };
+        });
 
-        await api.post(`accounts/${data?.user_id}`, { updateUser });
+        await api.put('accounts', {
+          name: values.firstname,
+          email: values.email,
+          description: values.about,
+          phone_number: values.phone,
+          category_id: values.interests_id,
+          city_name: values.city,
+          state_name: values.state,
+        });
+
         ToastAndroid.show('Perfil atualizado com sucesso.', ToastAndroid.SHORT);
 
         navigate('Profile');
-      } catch {
+      } catch (error) {
         ToastAndroid.show(
           'Houve um erro ao atualizar perfil.',
           ToastAndroid.SHORT,
         );
       }
     },
-    [navigate, data],
+    [navigate],
   );
 
   const LinkingToCreateCurriculum = useCallback(async () => {
@@ -210,16 +220,15 @@ function UpdateUser() {
 
         <Formik
           initialValues={{
-            image: '',
-            firstname: '',
-            lastname: '',
-            about: '',
-            interests_id: '',
-            interests: '',
-            email: '',
-            phone: '',
-            state: '',
-            city: '',
+            image: '' || data?.avatar,
+            firstname: '' || data?.name,
+            about: '' || data?.description,
+            interests_id: '' || data?.category.id,
+            interests: '' || data?.category.name,
+            email: '' || data?.email,
+            phone: '' || data?.phone_number,
+            state: '' || data?.city.state.name,
+            city: '' || data?.city.name,
           }}
           onSubmit={values => handleUpdateUser(values)}
           validationSchema={UpdateUserValidateShape}
@@ -277,29 +286,11 @@ function UpdateUser() {
                     animated: true,
                   })
                 }
-                onSubmitEditing={() => lastNameRef.current?.focus()}
+                onSubmitEditing={() => emailRef.current?.focus()}
                 value={values.firstname}
                 error={touched.firstname && errors.firstname}
               />
-              <Input
-                reference={lastNameRef}
-                placeholder="Sobrenome"
-                icon="address-book"
-                returnKeyType="next"
-                keyboardType="default"
-                autoCorrect={false}
-                onChangeText={handleChange('lastname')}
-                onBlur={handleBlur('lastname')}
-                value={values.lastname}
-                error={touched.lastname && errors.lastname}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(35),
-                    animated: true,
-                  })
-                }
-                onSubmitEditing={() => emailRef.current?.focus()}
-              />
+
               <Input
                 reference={emailRef}
                 placeholder="E-mail"
@@ -366,7 +357,11 @@ function UpdateUser() {
                   setFieldValue('interests_id', itemValue.id);
                 }}
               >
-                <Select.Item label="Declare sua area de interesse" value="" />
+                <Select.Item
+                  label={values.interests}
+                  value={{ name: values.interests, id: values.interests_id }}
+                />
+
                 {categories.map(category => (
                   <Select.Item label={category.name} value={category} />
                 ))}
@@ -385,7 +380,12 @@ function UpdateUser() {
                   loadCities(itemValue);
                 }}
               >
-                <Select.Item label="Selecione um estado" value="" />
+                <Select.Item
+                  label={
+                    values.state[0].toUpperCase() + values.state?.substring(1)
+                  }
+                  value={values.state}
+                />
                 {states.map(state => (
                   <Select.Item
                     label={`${state.nome} - ${state.sigla}`}
@@ -404,7 +404,12 @@ function UpdateUser() {
               <Select
                 onValueChange={itemValue => setFieldValue('city', itemValue)}
               >
-                <Select.Item label="Selecione uma cidade" value="" />
+                <Select.Item
+                  label={
+                    values.city[0].toUpperCase() + values.city?.substring(1)
+                  }
+                  value={values.city}
+                />
                 {cities.map(city => (
                   <Select.Item label={city.nome} value={city.nome} />
                 ))}

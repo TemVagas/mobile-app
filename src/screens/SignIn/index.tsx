@@ -51,7 +51,7 @@ function SignIn() {
 
   const handleSignIn = useCallback(
     async values => {
-      ToastAndroid.show('Validando dados inseridos.', ToastAndroid.SHORT);
+      ToastAndroid.show('Validando dados.', ToastAndroid.SHORT);
 
       const { error: errorSignIn, message: messageSignIn } = await signIn(
         values.email.toLowerCase(),

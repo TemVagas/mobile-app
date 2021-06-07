@@ -59,7 +59,7 @@ function Profile() {
   const excludeAccountRef = useRef<Modalize>(null);
   const removeVacancyRef = useRef<Modalize>(null);
 
-  const [isEnabled, setIsEnabled] = useState<boolean | null>(
+  const [isEnabled, setIsEnabled] = useState<boolean | null | undefined>(
     data?.is_recolocation,
   );
 
@@ -72,6 +72,20 @@ function Profile() {
     [navigate],
   );
 
+  const handleDeleteAccount = useCallback(async () => {
+    ToastAndroid.show('Deletando a sua conta.', ToastAndroid.SHORT);
+    try {
+      await api.delete('accounts');
+      ToastAndroid.show('Conta deletada com sucesso.', ToastAndroid.SHORT);
+      removeSteps();
+    } catch {
+      ToastAndroid.show(
+        'Houve um erro ao deletar sua conta, tente mais tarde.',
+        ToastAndroid.SHORT,
+      );
+    }
+  }, []);
+
   useEffect(() => {
     async function isRecolocation() {
       if (isEnabled) {
@@ -80,7 +94,7 @@ function Profile() {
           await api.patch(`/accounts/${data?.user_id}/recolocation`, {});
         } catch (error) {
           ToastAndroid.show(
-            'Houve um erro em anunciar recolocação.',
+            'Houve um erro em anunciar recolocação, tente mais tarde.',
             ToastAndroid.SHORT,
           );
         }
@@ -90,7 +104,7 @@ function Profile() {
           await api.patch(`/accounts/${data?.user_id}/recolocation`, {});
         } catch (error) {
           ToastAndroid.show(
-            'Houve um erro em remover recolocação.',
+            'Houve um erro em remover recolocação, tente mais tarde.',
             ToastAndroid.SHORT,
           );
         }
@@ -191,7 +205,7 @@ function Profile() {
             <CancelButton onPress={() => excludeAccountRef.current?.close()}>
               <CancelTextButton>Cancelar</CancelTextButton>
             </CancelButton>
-            <ConfirmButton onPress={removeSteps}>
+            <ConfirmButton onPress={handleDeleteAccount}>
               <ConfirmTextButton>Sim</ConfirmTextButton>
             </ConfirmButton>
           </ModalizeButtonContainer>

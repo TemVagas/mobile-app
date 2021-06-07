@@ -84,7 +84,7 @@ function Profile() {
         ToastAndroid.SHORT,
       );
     }
-  }, []);
+  }, [removeSteps]);
 
   useEffect(() => {
     async function isRecolocation() {

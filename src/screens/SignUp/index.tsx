@@ -129,7 +129,10 @@ function SignUp() {
           ToastAndroid.SHORT,
         );
       } catch (err) {
-        ToastAndroid.show('Houve um erro ao cadastrar-se.', ToastAndroid.SHORT);
+        ToastAndroid.show(
+          'Houve um erro ao cadastrar-se, tente mais tarde.',
+          ToastAndroid.SHORT,
+        );
       }
     },
     [navigate],

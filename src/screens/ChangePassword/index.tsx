@@ -40,7 +40,7 @@ function ChangePassword() {
         navigate('Profile');
       } catch (error) {
         ToastAndroid.show(
-          'Houve um erro ao alterar senha.',
+          'Houve um erro ao alterar senha, tente mais tarde.',
           ToastAndroid.SHORT,
         );
       }

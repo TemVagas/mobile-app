@@ -104,7 +104,7 @@ function AddVacancy() {
         ToastAndroid.show('Vaga criada.', ToastAndroid.SHORT);
       } catch (err) {
         ToastAndroid.show(
-          'Houve um erro ao anunciar vaga.',
+          'Houve um erro ao anunciar vaga, tente mais tarde.',
           ToastAndroid.SHORT,
         );
       }

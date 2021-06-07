@@ -150,7 +150,7 @@ function UpdateUser() {
         navigate('Profile');
       } catch (error) {
         ToastAndroid.show(
-          'Houve um erro ao atualizar perfil.',
+          'Houve um erro ao atualizar perfil, tente mais tarde.',
           ToastAndroid.SHORT,
         );
       }

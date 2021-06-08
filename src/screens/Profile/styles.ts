@@ -4,9 +4,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
-import { Animated } from 'react-native';
+import { Animated, FlatList } from 'react-native';
 
 import { color, font } from '../../constants';
+import { JobsProps } from '.';
 
 export const SafeContainer = styled.SafeAreaView`
   flex: 1;
@@ -189,4 +190,19 @@ export const CancelTextButton = styled.Text`
   font-family: ${font.medium};
   color: ${color.text.primary};
   font-size: ${wp(4.2)}px;
+`;
+export const FlatListItems = styled(FlatList as new () => FlatList<JobsProps>)`
+  width: 100%;
+`;
+export const Separator = styled.View`
+  height: ${hp(2)}px;
+`;
+export const Loading = styled.ActivityIndicator`
+  height: ${hp(8)}px;
+`;
+export const SwipeableButton = styled.TouchableOpacity`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 `;

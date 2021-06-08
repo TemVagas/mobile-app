@@ -33,9 +33,9 @@ export const UpdateUserValidateShape = Yup.object().shape({
   // lastname: Yup.string().required('Sobrenome é um campo obrigatório'),
   about: Yup.string().required('Este é um campo obrigatório'),
   interests: Yup.string().required('É nesessário declarar algum interesse'),
-  email: Yup.string()
-    .email('Formato de email inválido')
-    .required('Email é um campo obrigatório'),
+  // email: Yup.string()
+  //   .email('Formato de email inválido')
+  //   .required('Email é um campo obrigatório'),
   phone: Yup.string()
     .min(11, 'O número de telefone deve conter 11 caracteres')
     .required('Telefone é um campo obrigatório'),

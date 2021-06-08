@@ -225,7 +225,7 @@ function UpdateUser() {
             about: '' || data?.description,
             interests_id: '' || data?.category.id,
             interests: '' || data?.category.name,
-            email: '' || data?.email,
+            // email: '' || data?.email,
             phone: '' || data?.phone_number,
             state: '' || data?.city.state.name,
             city: '' || data?.city.name,
@@ -286,12 +286,12 @@ function UpdateUser() {
                     animated: true,
                   })
                 }
-                onSubmitEditing={() => emailRef.current?.focus()}
+                onSubmitEditing={() => phoneRef.current?.focus()}
                 value={values.firstname}
                 error={touched.firstname && errors.firstname}
               />
 
-              <Input
+              {/* <Input
                 reference={emailRef}
                 placeholder="E-mail"
                 icon="user"
@@ -309,7 +309,7 @@ function UpdateUser() {
                   })
                 }
                 onSubmitEditing={() => phoneRef.current?.focus()}
-              />
+              /> */}
 
               <Input
                 reference={phoneRef}
@@ -325,7 +325,7 @@ function UpdateUser() {
                 error={touched.phone && errors.phone}
                 onFocus={() =>
                   scrollRef.current?.scrollTo({
-                    y: hp(80),
+                    y: hp(50),
                     animated: true,
                   })
                 }
@@ -345,7 +345,7 @@ function UpdateUser() {
                 error={touched.about && errors.about}
                 onFocus={() =>
                   scrollRef.current?.scrollTo({
-                    y: hp(95),
+                    y: hp(80),
                     animated: true,
                   })
                 }

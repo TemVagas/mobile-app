@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { createRef, useCallback, useRef, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { ScrollView, TextInput, Switch } from 'react-native';
 import {
@@ -25,7 +25,15 @@ import Input from '../../components/Input';
 import { UpdateVacancyValidateShape } from '../../utils/validation';
 import { color } from '../../constants';
 
+import { JobsProps } from '../Profile';
+
 function UpdateVacancy() {
+  const { params } = useRoute();
+
+  const job = params as JobsProps;
+
+  console.log(job);
+
   const { goBack } = useNavigation();
 
   const scrollRef = useRef<ScrollView>();
@@ -69,16 +77,16 @@ function UpdateVacancy() {
 
       <Formik
         initialValues={{
-          title: '',
-          description: '',
-          email: '',
-          phone: '',
-          remuneration: '',
-          state: '',
-          city: '',
-          type: '',
-          represents: '',
-          category: '',
+          title: job.title,
+          description: job.description,
+          email: job.email,
+          phone: job.phone_number,
+          remuneration: job.remuneration_value,
+          state: job.state,
+          city: job.city,
+          type: job.type,
+          represents: job.represents,
+          category: job.category,
         }}
         onSubmit={values => handleUpdateVacancy(values)}
         validationSchema={UpdateVacancyValidateShape}
@@ -260,7 +268,7 @@ function UpdateVacancy() {
                   setFieldValue('remuneration', text);
                 }}
                 onBlur={handleBlur('remuneration')}
-                value={values.remuneration}
+                value={String(values.remuneration)}
                 onFocus={() =>
                   scrollRef.current?.scrollToEnd({
                     animated: true,

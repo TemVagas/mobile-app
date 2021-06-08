@@ -17,11 +17,12 @@ interface AuthContextData {
     email: string,
     password: string,
   ): Promise<{ error: boolean; message?: string }>;
+  updateUser(data: UserProps): Promise<void>;
   signOut(): void;
 }
 
 interface UserProps {
-  user_id: string;
+  id: string;
   avatar: string | null;
   curriculum: string | null;
   favorites_jobs: [];
@@ -108,12 +109,18 @@ export const AuthProvider: React.FC = ({ children }) => {
     setData(null);
   };
 
+  const updateUser = useCallback(async (user: UserProps) => {
+    await AsyncStorage.setItem('@@JobFinder:user', JSON.stringify(user));
+    setData(user);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
         signed: !!data,
         data,
         signIn,
+        updateUser,
         signOut,
       }}
     >

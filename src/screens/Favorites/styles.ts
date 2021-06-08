@@ -4,9 +4,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { Animated } from 'react-native';
+import { Animated, FlatList } from 'react-native';
 
 import { color, font } from '../../constants';
+import { JobsProps } from '../Profile';
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -112,4 +113,14 @@ export const CancelTextButton = styled.Text`
   font-family: ${font.medium};
   color: ${color.text.primary};
   font-size: ${wp(4.2)}px;
+`;
+export const FlatListItems = styled(FlatList as new () => FlatList<JobsProps>)`
+  width: 100%;
+  height: ${hp(83)}px;
+`;
+export const Separator = styled.View`
+  height: ${hp(2)}px;
+`;
+export const Loading = styled.ActivityIndicator`
+  height: ${hp(8)}px;
 `;

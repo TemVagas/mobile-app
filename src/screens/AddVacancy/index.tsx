@@ -94,7 +94,7 @@ function AddVacancy() {
           email: values.email,
           phone_number: values.phone,
           type: values.type,
-          category_id: values.category_id,
+          // category_id: values.category_id,
           city_name: values.city,
           state_name: values.state,
           remuneration_value: Number(values.remuneration),

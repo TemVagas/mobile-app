@@ -414,6 +414,13 @@ function SignUp() {
                 }}
               >
                 <Select.Item label="Selecione um estado" value="" />
+                {states.map(state => (
+                  <Select.Item
+                    key={state.id}
+                    label={state.nome}
+                    value={state}
+                  />
+                ))}
               </Select>
               {errors.state && touched.state ? (
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -428,7 +435,11 @@ function SignUp() {
               >
                 <Select.Item label="Selecione uma cidade" value="" />
                 {cities.map(city => (
-                  <Select.Item label={city.nome} value={city.nome} />
+                  <Select.Item
+                    key={city.id}
+                    label={city.nome}
+                    value={city.nome}
+                  />
                 ))}
               </Select>
               {errors.city && touched.city ? (

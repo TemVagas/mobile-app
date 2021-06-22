@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: 'http://192.168.3.15:3335',
+  baseURL: 'https://jobfinder-rest-api.herokuapp.com/api/',
 });

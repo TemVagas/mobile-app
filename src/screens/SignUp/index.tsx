@@ -9,13 +9,11 @@ import React, {
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
 import {
   Alert,
   Platform,
   ScrollView,
   TextInput,
-  Linking,
   ToastAndroid,
 } from 'react-native';
 import { Formik } from 'formik';
@@ -31,17 +29,11 @@ import {
   GoBackButton,
   Header,
   HeaderContainer,
-  StyledImage,
   Title,
-  Content,
   Button,
   ButtonText,
-  CameraIcon,
-  ButtonCamera,
   Error,
   Select,
-  CreateCurriculum,
-  CreateCurriculumText,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -70,11 +62,9 @@ interface CitiesProps {
 function SignUp() {
   const { goBack, navigate } = useNavigation();
 
-  const [image, setImage] = useState<string>();
   const [categories, setCategories] = useState<CategoriesProps[]>([]);
   const [states, setStates] = useState<StatesProps[]>([]);
   const [cities, setCities] = useState<CitiesProps[]>([]);
-  const [curriculum, setCurriculum] = useState<string>();
   const [passwordIsVisible, setPasswordIsVisible] = useState(true);
 
   const lastNameRef = createRef<TextInput>();
@@ -85,49 +75,35 @@ function SignUp() {
 
   const scrollRef = useRef<ScrollView>();
 
-  const pickImage = useCallback(async setFieldValue => {
-    await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    }).then(response => {
-      if (!response.cancelled) {
-        setImage(response.uri);
-        setFieldValue('image', response.uri);
-      }
-    });
-  }, []);
-
-  const pickDocument = useCallback(async () => {
-    await DocumentPicker.getDocumentAsync({
-      type: 'application/pdf',
-      multiple: false,
-    }).then(response => {
-      if (response.type === 'success') {
-        setCurriculum(response.uri);
-      }
-    });
-  }, []);
-
   const handleSignUp = useCallback(
     async values => {
-      ToastAndroid.show('Cadastrando usuário.', ToastAndroid.SHORT);
+      ToastAndroid.show('Enviando informações.', ToastAndroid.SHORT);
       try {
         await api.post('accounts', {
-          name: `${values.firstname} ${values.lastname}`,
-          email: values.email.toLowerCase(),
-          description: values.about,
-          password: values.password,
-          phone_number: values.phone,
           category_id: values.interests_id,
+          description: values.about,
+          email: values.email.toLowerCase(),
+          password: values.password,
+          name: `${values.firstname} ${values.lastname}`,
+          phone_number: values.phone,
           city_name: values.city,
           state_name: values.state,
         });
-        navigate('SingIn');
+
+        const response = await api.post('sessions', {
+          email: values.email.toLowerCase(),
+          password: values.password,
+        });
+
+        const { token } = response.data;
+
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+
         ToastAndroid.show(
-          'Cadastro concluido com sucesso.',
+          'Primeira etapa do cadastro concluida.',
           ToastAndroid.SHORT,
         );
+        navigate('SubmitAvatar');
       } catch (err) {
         ToastAndroid.show(
           'Houve um erro ao cadastrar-se, tente mais tarde.',
@@ -148,10 +124,6 @@ function SignUp() {
   const handleMaskPhone = useCallback((text: string, setFieldValue) => {
     const value = maskPhone(text);
     setFieldValue('phone', value);
-  }, []);
-
-  const LinkingToCreateCurriculum = useCallback(async () => {
-    await Linking.openURL('https://geracurriculo.com.br/');
   }, []);
 
   useEffect(() => {
@@ -211,7 +183,6 @@ function SignUp() {
         </HeaderContainer>
         <Formik
           initialValues={{
-            image: '',
             firstname: '',
             lastname: '',
             about: '',
@@ -236,41 +207,6 @@ function SignUp() {
             setFieldValue,
           }) => (
             <>
-              <Content>
-                <ButtonCamera
-                  onPress={() => pickImage(setFieldValue)}
-                  activeOpacity={1}
-                >
-                  {touched.image && errors.image ? (
-                    <StyledImage
-                      source={{
-                        uri:
-                          'https://cdn0.iconfinder.com/data/icons/shift-free/32/Error-512.png',
-                      }}
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <StyledImage
-                      source={{
-                        uri:
-                          image ||
-                          'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
-                      }}
-                      resizeMode="cover"
-                    />
-                  )}
-
-                  <CameraIcon>
-                    <FontAwesome
-                      name="camera-retro"
-                      color={color.background}
-                      size={18}
-                    />
-                  </CameraIcon>
-                </ButtonCamera>
-              </Content>
-              {errors.image && <Error>{errors.image}</Error>}
-
               <Input
                 placeholder="Nome"
                 icon="address-book"
@@ -279,12 +215,6 @@ function SignUp() {
                 autoCorrect={false}
                 onChangeText={handleChange('firstname')}
                 onBlur={handleBlur('firstname')}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(20),
-                    animated: true,
-                  })
-                }
                 onSubmitEditing={() => lastNameRef.current?.focus()}
                 value={values.firstname}
                 error={touched.firstname && errors.firstname}
@@ -300,12 +230,6 @@ function SignUp() {
                 onBlur={handleBlur('lastname')}
                 value={values.lastname}
                 error={touched.lastname && errors.lastname}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(35),
-                    animated: true,
-                  })
-                }
                 onSubmitEditing={() => emailRef.current?.focus()}
               />
               <Input
@@ -319,12 +243,6 @@ function SignUp() {
                 onBlur={handleBlur('email')}
                 value={values.email}
                 error={touched.email && errors.email}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(50),
-                    animated: true,
-                  })
-                }
                 onSubmitEditing={() => passRef.current?.focus()}
               />
               <Input
@@ -341,12 +259,6 @@ function SignUp() {
                 onBlur={handleBlur('password')}
                 value={values.password}
                 error={touched.password && errors.password}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(65),
-                    animated: true,
-                  })
-                }
                 onSubmitEditing={() => phoneRef.current?.focus()}
               />
               <Input
@@ -361,12 +273,6 @@ function SignUp() {
                 onBlur={handleBlur('phone')}
                 value={values.phone}
                 error={touched.phone && errors.phone}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(80),
-                    animated: true,
-                  })
-                }
                 onSubmitEditing={() => describeRef.current?.focus()}
               />
               <Input
@@ -381,12 +287,6 @@ function SignUp() {
                 onBlur={handleBlur('about')}
                 value={values.about}
                 error={touched.about && errors.about}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(95),
-                    animated: true,
-                  })
-                }
               />
               <Select
                 onValueChange={(itemValue: any) => {
@@ -450,30 +350,8 @@ function SignUp() {
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
               )}
 
-              <Button
-                activeOpacity={0.8}
-                onPress={pickDocument}
-                style={{
-                  backgroundColor: color.primary,
-                }}
-              >
-                {curriculum ? (
-                  <FontAwesome
-                    name="check"
-                    color={color.background}
-                    size={20}
-                  />
-                ) : (
-                  <ButtonText>CURRICULO</ButtonText>
-                )}
-              </Button>
-              <CreateCurriculum onPress={LinkingToCreateCurriculum}>
-                <CreateCurriculumText>
-                  Não possui curriculo? Clique aqui e crie o seu!
-                </CreateCurriculumText>
-              </CreateCurriculum>
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-                <ButtonText>CONCLUIR</ButtonText>
+                <ButtonText>PRÓXIMO</ButtonText>
               </Button>
             </>
           )}

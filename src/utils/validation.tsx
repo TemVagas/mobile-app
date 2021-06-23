@@ -28,6 +28,10 @@ export const SignUpValidateShape = Yup.object().shape({
   city: Yup.string().required('É necessário selecionar uma cidade'),
 });
 
+export const AvatarValidateShape = Yup.object().shape({
+  image: Yup.string().min(6).required('Selecione uma foto de perfil'),
+});
+
 export const UpdateUserValidateShape = Yup.object().shape({
   firstname: Yup.string().required('Nome é um campo obrigatório'),
   // lastname: Yup.string().required('Sobrenome é um campo obrigatório'),

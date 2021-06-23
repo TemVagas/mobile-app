@@ -65,7 +65,7 @@ function SubmitAvatar() {
       await api.patch('accounts/avatar', data)
 
     },
-    [navigate],
+    [navigate, fileName, image],
   );
 
   useEffect(() => {

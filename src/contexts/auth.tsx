@@ -9,6 +9,7 @@ import React, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import api from '../services/api';
+import { Alert } from 'react-native';
 
 interface AuthContextData {
   signed: boolean;
@@ -83,6 +84,8 @@ export const AuthProvider: React.FC = ({ children }) => {
         password,
       });
 
+      Alert.alert(String(response.data))
+
       const { user, token } = response.data;
 
       await AsyncStorage.multiSet([
@@ -95,6 +98,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       return { error: false };
     } catch (err) {
+      Alert.alert(String(err))
       return {
         error: true,
         message:

@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { ScrollView, TextInput, Switch, ToastAndroid } from 'react-native';
+import { ScrollView, TextInput, Switch, ToastAndroid, Alert } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -34,6 +34,7 @@ import { AddVacancyValidateShape } from '../../utils/validation';
 import Input from '../../components/Input';
 import { color } from '../../constants';
 import api from '../../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CategoriesProps {
   id: string;
@@ -88,17 +89,18 @@ function AddVacancy() {
     async values => {
       ToastAndroid.show('Anunciando vaga.', ToastAndroid.SHORT);
       try {
-        await api.post('jobs', {
+
+        const x = await api.post('jobs', {
           title: values.title,
           description: values.description,
           email: values.email,
           phone_number: values.phone,
           type: values.type,
-          // category_id: values.category_id,
+          category_id: values.category_id,
           city_name: values.city,
           state_name: values.state,
-          remuneration_value: Number(values.remuneration),
-          represents: values.represents,
+          remuneration_value: values.remuneration,
+          represents: !values.represents ? ' ' : values.represents,
         });
         goBack();
         ToastAndroid.show('Vaga criada.', ToastAndroid.SHORT);

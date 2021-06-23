@@ -29,78 +29,43 @@ function SubmitAvatar() {
   const { navigate } = useNavigation();
 
   const [image, setImage] = useState<string>();
-  const [file, setFile] = useState<any>();
+  const [fileName, setFileName] = useState<string>('');
 
   const scrollRef = useRef<ScrollView>();
 
   const pickImage = useCallback(async setFieldValue => {
-    await ImagePicker.launchImageLibraryAsync({
+    const responsePicker = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
-    }).then(response => {
-      if (!response.cancelled) {
-        setFile({
-          filename: response.uri.split('/').pop(),
-          type: 'image/jpg',
-          uri: response.uri,
-        });
-        setImage(response.uri);
-        setFieldValue('image', response.uri);
-      }
-    });
+    })
+
+
+    if (responsePicker.cancelled) {
+      return;
+    }
+
+    setFileName(String(responsePicker.uri.split('/').pop()))
+    setImage(responsePicker.uri);
+    setFieldValue('image', responsePicker.uri);
   }, []);
 
   const handleSignUp = useCallback(
     async values => {
       ToastAndroid.show('Enviando imagem.', ToastAndroid.SHORT);
-      // try {
-      // eslint-disable-next-line no-undef
+
       const data = new FormData();
 
       data.append('avatar', {
-        name: `image_${file.filename}`,
-        type: file.type,
-        uri: file.uri,
-      });
+        name: fileName,
+        type: 'image/jpg',
+        uri: image,
+      } as any);
 
-      console.log(data);
+      await api.patch('accounts/avatar', data)
 
-      await api
-        .patch('accounts/avatar', {
-          mode: 'cors',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-          },
-          body: data,
-        })
-        .then(data => {
-          console.log(data);
-        })
-        .catch(error => {
-          console.log(error.response.data);
-        });
-
-      // console.log(response);
-
-      // navigate('SubmitCurriculum');
-      // ToastAndroid.show(
-      //   'Envio de imagem concluido com sucesso.',
-      //   ToastAndroid.SHORT,
-      // );
-      // } catch (err) {
-      //   console.log(err.data);
-      //   console.log(err.message);
-      //   console.log(err);
-
-      //   ToastAndroid.show(
-      //     'Houve um erro ao cadastrar-se, tente mais tarde.',
-      //     ToastAndroid.SHORT,
-      //   );
-      // }
     },
-    [navigate, file],
+    [navigate],
   );
 
   useEffect(() => {

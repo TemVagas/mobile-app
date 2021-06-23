@@ -38,14 +38,13 @@ function SubmitAvatar() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
-    })
-
+    });
 
     if (responsePicker.cancelled) {
       return;
     }
 
-    setFileName(String(responsePicker.uri.split('/').pop()))
+    setFileName(String(responsePicker.uri.split('/').pop()));
     setImage(responsePicker.uri);
     setFieldValue('image', responsePicker.uri);
   }, []);
@@ -53,7 +52,7 @@ function SubmitAvatar() {
   const handleSignUp = useCallback(
     async values => {
       ToastAndroid.show('Enviando imagem.', ToastAndroid.SHORT);
-
+      // eslint-disable-next-line no-undef
       const data = new FormData();
 
       data.append('avatar', {
@@ -62,10 +61,11 @@ function SubmitAvatar() {
         uri: image,
       } as any);
 
-      await api.patch('accounts/avatar', data)
+      await api.patch('accounts/avatar', data);
 
+      navigate('SubmitCurriculum');
     },
-    [navigate],
+    [navigate, image, fileName],
   );
 
   useEffect(() => {

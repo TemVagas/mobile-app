@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import { ScrollView, Linking, ToastAndroid } from 'react-native';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { color } from '../../constants';
 
 import {
   Container,
@@ -17,25 +19,25 @@ import {
   CreateCurriculumText,
 } from './styles';
 
-import { color } from '../../constants';
 import api from '../../services/api';
 
 function SubmitCurriculum() {
   const { navigate } = useNavigation();
 
-  const [curriculum, setCurriculum] = useState<string>();
+  const [curriculum, setCurriculum] = useState<any>();
 
   const scrollRef = useRef<ScrollView>();
 
   const pickDocument = useCallback(async () => {
-    await DocumentPicker.getDocumentAsync({
+    const responsePicker = await DocumentPicker.getDocumentAsync({
       type: 'application/pdf',
       multiple: false,
-    }).then(response => {
-      if (response.type === 'success') {
-        setCurriculum(response);
-      }
     });
+
+    if (responsePicker.type === 'cancel') {
+      return;
+    }
+    setCurriculum(responsePicker);
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -49,17 +51,16 @@ function SubmitCurriculum() {
       const data = new FormData();
 
       data.append('curriculum', {
-        curriculum,
-      });
+        name: 'curriculo',
+        type: 'application/pdf',
+        uri: curriculum.uri,
+      } as any);
 
-      await api.patch('accounts/curriculum', {
-        data,
-      });
+      await api.patch('accounts/curriculum', data);
 
       navigate('SingIn');
       ToastAndroid.show('Cadastro concluido com sucesso.', ToastAndroid.SHORT);
     } catch (err) {
-      console.log(err.message);
       ToastAndroid.show(
         'Houve um erro ao cadastrar-se, tente mais tarde.',
         ToastAndroid.SHORT,
@@ -82,15 +83,30 @@ function SubmitCurriculum() {
 
         <Button
           activeOpacity={0.8}
-          onPress={pickDocument}
           style={{
-            backgroundColor: color.primary,
+            borderStyle: 'dashed',
+            borderWidth: 1,
+            backgroundColor: 'transparent',
+            height: hp(18),
           }}
+          onPress={pickDocument}
         >
           {curriculum ? (
-            <FontAwesome name="check" color={color.background} size={20} />
+            <>
+              <FontAwesome name="check" color={color.success} size={hp(8)} />
+
+              <ButtonText style={{ color: color.primary }}>
+                Curriculo carregado
+              </ButtonText>
+            </>
           ) : (
-            <ButtonText>CURRICULO</ButtonText>
+            <>
+              <FontAwesome name="download" color={color.primary} size={hp(8)} />
+
+              <ButtonText style={{ color: color.primary }}>
+                Selecione seu curriculo
+              </ButtonText>
+            </>
           )}
         </Button>
         <CreateCurriculum onPress={LinkingToCreateCurriculum}>

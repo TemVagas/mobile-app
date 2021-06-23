@@ -17,7 +17,6 @@ export const Container = styled.View`
 export const Form = styled(Animated.ScrollView)`
   width: 100%;
   margin-top: ${hp(2)}px;
-  border: 1px solid #000;
 `;
 export const HeaderContainer = styled.View`
   height: ${hp(30)}px;

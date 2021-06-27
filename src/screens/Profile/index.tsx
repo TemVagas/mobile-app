@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { Animated, ToastAndroid } from 'react-native';
+import { Animated, ToastAndroid, ActivityIndicator } from 'react-native';
 import { Modalize } from 'react-native-modalize';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { FontAwesome } from '@expo/vector-icons';
@@ -44,6 +44,7 @@ import {
   Loading,
   Separator,
   SwipeableButton,
+  LoadingContainer,
 } from './styles';
 
 import { useFirstSteps } from '../../contexts/steps';
@@ -73,6 +74,7 @@ function Profile() {
   const focused = useIsFocused();
 
   const [slice, setSlice] = useState(5);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { navigate } = useNavigation();
   const { removeSteps } = useFirstSteps();
@@ -84,9 +86,7 @@ function Profile() {
   const excludeAccountRef = useRef<Modalize>(null);
   const removeVacancyRef = useRef<Modalize>(null);
 
-  const [isEnabled, setIsEnabled] = useState<boolean>(
-    data?.is_recolocation || false,
-  );
+  const [isEnabled, setIsEnabled] = useState<boolean>();
   const [myJobs, setMyJobs] = useState<JobsProps[]>([]);
 
   const toggleSwitch = () => setIsEnabled(state => !state);
@@ -113,55 +113,55 @@ function Profile() {
   }, [removeSteps]);
 
   useEffect(() => {
-    async function isRecolocation() {
-      if (isEnabled) {
-        ToastAndroid.show('Anunciando recolocação.', ToastAndroid.SHORT);
-        try {
-          await api.patch(`/accounts/${data?.id}/recolocation`, {});
-        } catch (error) {
-          ToastAndroid.show(
-            'Houve um erro em anunciar recolocação, tente mais tarde.',
-            ToastAndroid.SHORT,
-          );
-        }
-      } else {
-        ToastAndroid.show('Removendo recolocação.', ToastAndroid.SHORT);
-        try {
-          await api.patch(`/accounts/${data?.id}/recolocation`, {});
-        } catch (error) {
-          ToastAndroid.show(
-            'Houve um erro em remover recolocação, tente mais tarde.',
-            ToastAndroid.SHORT,
-          );
-        }
-      }
+    async function getUser() {
+      setIsLoading(true);
+      const response = await api.get('/accounts/infos');
+
+      updateUser(response.data);
+      setIsEnabled(response.data.is_recolocation);
+      setIsLoading(false);
     }
-    isRecolocation();
-  }, [isEnabled, data]);
+    getUser();
+  }, [focused, updateUser]);
+
+  async function isRecolocation() {
+    try {
+      const response = await api.patch(`/accounts/recolocation`);
+
+      ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+    } catch (error) {
+      ToastAndroid.show('Houve um erro, tente mais tarde.', ToastAndroid.SHORT);
+    }
+  }
 
   useEffect(() => {
     async function getMyJobs() {
-      const response = await api.get(`accounts/${data?.id}`);
-      setMyJobs(response.data.jobs);
+      const response = await api.get('/accounts/jobs');
+      setMyJobs(response.data);
     }
     getMyJobs();
-  }, [focused, data, updateUser]);
+  }, [focused]);
+
+  if (isLoading) {
+    return (
+      <SafeContainer>
+        <LoadingContainer>
+          <ActivityIndicator color={color.primary} size="large" />
+        </LoadingContainer>
+      </SafeContainer>
+    );
+  }
 
   return (
     <SafeContainer>
       <Header>
         <TextContainer>
           <Text>Bem-vindo</Text>
-          <User>
-            {data?.name && data?.name.length > 12
-              ? `${data?.name.substring(0, 12)}...`
-              : data?.name}
-          </User>
+          <User>{data?.name}</User>
         </TextContainer>
-        <Avatar
-          source={{ uri: 'https://picsum.photos/200' }}
-          resizeMode="cover"
-        />
+        {data?.avatar_uri && (
+          <Avatar source={{ uri: data?.avatar_uri }} resizeMode="cover" />
+        )}
       </Header>
 
       <FavoriteButton onPress={() => handleNavigate('Favorites')}>
@@ -198,67 +198,76 @@ function Profile() {
         <RecolocationSwitch
           trackColor={{ false: color.text.tertiary, true: color.text.tertiary }}
           thumbColor={isEnabled ? color.primary : color.primary}
-          onValueChange={toggleSwitch}
+          onValueChange={() => {
+            toggleSwitch();
+            isRecolocation();
+          }}
           value={isEnabled}
         />
       </RecolocationContainer>
 
-      <FlatListItems
-        showsVerticalScrollIndicator={false}
-        data={myJobs.slice(0, slice)}
-        keyExtractor={item => item.id}
-        onEndReached={() => {
-          if (slice < myJobs.length) {
-            setSlice(state => state + 5);
+      {myJobs.length > 0 ? (
+        <FlatListItems
+          showsVerticalScrollIndicator={false}
+          data={myJobs.slice(0, slice)}
+          keyExtractor={item => item.id}
+          onEndReached={() => {
+            if (slice < myJobs.length) {
+              setSlice(state => state + 5);
+            }
+          }}
+          onEndReachedThreshold={0.1}
+          renderItem={({ item }) => (
+            <Swipeable
+              overshootRight={false}
+              renderRightActions={() => (
+                <Animated.View style={{ flexDirection: 'row' }}>
+                  <ButtonUpdate
+                    activeOpacity={0.7}
+                    onPress={() => navigate('UpdateVacancy', item)}
+                  >
+                    <Icon name="edit" size={24} color={color.background} />
+                  </ButtonUpdate>
+                  <ButtonRemove
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      removeVacancyRef.current?.open();
+                      setRemoveJobById(item.id);
+                    }}
+                  >
+                    <Icon name="trash" size={24} color={color.background} />
+                  </ButtonRemove>
+                </Animated.View>
+              )}
+            >
+              <Vacancy>
+                <SwipeableButton onPress={() => navigate('MyDetails', item)}>
+                  <VacancyTitle>{item.title.substring(0, 16)}...</VacancyTitle>
+                  <VacancyInfo>
+                    <Company>{item.description.substring(0, 5)}...</Company>
+                    <Remuneration>
+                      {item.remuneration_value === 0
+                        ? 'A combinar'
+                        : `R$ ${item.remuneration_value}`}
+                    </Remuneration>
+                  </VacancyInfo>
+                </SwipeableButton>
+              </Vacancy>
+            </Swipeable>
+          )}
+          ListFooterComponent={
+            slice < myJobs.length ? (
+              <Loading size="large" color={color.primary} />
+            ) : (
+              <Separator />
+            )
           }
-        }}
-        onEndReachedThreshold={0.1}
-        renderItem={({ item }) => (
-          <Swipeable
-            overshootRight={false}
-            renderRightActions={() => (
-              <Animated.View style={{ flexDirection: 'row' }}>
-                <ButtonUpdate
-                  activeOpacity={0.7}
-                  onPress={() => navigate('UpdateVacancy', item)}
-                >
-                  <Icon name="edit" size={24} color={color.background} />
-                </ButtonUpdate>
-                <ButtonRemove
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    removeVacancyRef.current?.open();
-                    setRemoveJobById(item.id);
-                  }}
-                >
-                  <Icon name="trash" size={24} color={color.background} />
-                </ButtonRemove>
-              </Animated.View>
-            )}
-          >
-            <Vacancy>
-              <SwipeableButton onPress={() => navigate('MyDetails', item)}>
-                <VacancyTitle>{item.title.substring(0, 16)}...</VacancyTitle>
-                <VacancyInfo>
-                  <Company>{item.description.substring(0, 5)}...</Company>
-                  <Remuneration>
-                    {item.remuneration_value === 0
-                      ? 'A combinar'
-                      : `R$ ${item.remuneration_value}`}
-                  </Remuneration>
-                </VacancyInfo>
-              </SwipeableButton>
-            </Vacancy>
-          </Swipeable>
-        )}
-        ListFooterComponent={
-          slice < myJobs.length ? (
-            <Loading size="large" color={color.primary} />
-          ) : (
-            <Separator />
-          )
-        }
-      />
+        />
+      ) : (
+        <LoadingContainer>
+          <Recolocation>Nenhuma vaga cadastrada</Recolocation>
+        </LoadingContainer>
+      )}
 
       <Modalize ref={excludeAccountRef} adjustToContentHeight>
         <ModalizeContainer>

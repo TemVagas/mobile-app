@@ -124,3 +124,20 @@ export const Separator = styled.View`
 export const Loading = styled.ActivityIndicator`
   height: ${hp(8)}px;
 `;
+export const SafeContainer = styled.SafeAreaView`
+  flex: 1;
+  background-color: ${color.background};
+  margin-top: ${getStatusBarHeight()}px;
+`;
+
+export const LoadingContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin-top: ${hp(40)}px;
+`;
+export const TextNotFound = styled.Text`
+  font-family: ${font.regular};
+  font-size: ${wp(5)}px;
+  color: ${color.text.secondary};
+`;

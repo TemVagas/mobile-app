@@ -1,6 +1,6 @@
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, ToastAndroid } from 'react-native';
+import { Animated, ToastAndroid, ActivityIndicator } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Modalize } from 'react-native-modalize';
 import { color } from '../../constants';
@@ -30,6 +30,9 @@ import {
   FlatListItems,
   Loading,
   Separator,
+  LoadingContainer,
+  SafeContainer,
+  TextNotFound,
 } from './styles';
 import api from '../../services/api';
 
@@ -40,6 +43,7 @@ function Favorites() {
 
   const { navigate } = useNavigation();
   const [slice, setSlice] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
 
   const removeVacancyRef = useRef<Modalize>(null);
 
@@ -49,66 +53,84 @@ function Favorites() {
 
   useEffect(() => {
     async function getMyFavoritesJobs() {
-      const response = await api.get(`accounts/${data?.id}`);
-      setMyFavoriteJobs(response.data.favorites_jobs);
+      setIsLoading(true);
+      const response = await api.get(`/accounts/favorites`);
+      setMyFavoriteJobs(response.data);
+      setIsLoading(false);
     }
     getMyFavoritesJobs();
   }, [focused, data]);
+
+  if (isLoading) {
+    return (
+      <SafeContainer>
+        <LoadingContainer>
+          <ActivityIndicator color={color.primary} size="large" />
+        </LoadingContainer>
+      </SafeContainer>
+    );
+  }
 
   return (
     <Container showsVerticalScrollIndicator={false}>
       <Logo>Meus Favoritos</Logo>
 
-      <FlatListItems
-        showsVerticalScrollIndicator={false}
-        data={myFavoriteJobs.slice(0, slice)}
-        keyExtractor={item => item.id}
-        onEndReached={() => {
-          if (slice < myFavoriteJobs.length) {
-            setSlice(state => state + 10);
+      {myFavoriteJobs.length > 0 ? (
+        <FlatListItems
+          showsVerticalScrollIndicator={false}
+          data={myFavoriteJobs.slice(0, slice)}
+          keyExtractor={item => item.id}
+          onEndReached={() => {
+            if (slice < myFavoriteJobs.length) {
+              setSlice(state => state + 10);
+            }
+          }}
+          onEndReachedThreshold={0.1}
+          renderItem={({ item }) => (
+            <Swipeable
+              overshootRight={false}
+              renderRightActions={() => (
+                <Animated.View style={{ flexDirection: 'row' }}>
+                  <ButtonRemove
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      removeVacancyRef.current?.open();
+                      setRemoveJobById(item.id);
+                    }}
+                  >
+                    <Icon name="trash" size={24} color={color.background} />
+                  </ButtonRemove>
+                </Animated.View>
+              )}
+            >
+              <Vacancy>
+                <VacancyButton onPress={() => navigate('VacancyDetails', item)}>
+                  <VacancyTitle>{item.title.substring(0, 16)}...</VacancyTitle>
+                  <VacancyInfo>
+                    <Company>{item.description.substring(0, 5)}...</Company>
+                    <Remuneration>
+                      {item.remuneration_value === 0
+                        ? 'A combinar'
+                        : `R$ ${item.remuneration_value}`}
+                    </Remuneration>
+                  </VacancyInfo>
+                </VacancyButton>
+              </Vacancy>
+            </Swipeable>
+          )}
+          ListFooterComponent={
+            slice < myFavoriteJobs.length ? (
+              <Loading size="large" color={color.primary} />
+            ) : (
+              <Separator />
+            )
           }
-        }}
-        onEndReachedThreshold={0.1}
-        renderItem={({ item }) => (
-          <Swipeable
-            overshootRight={false}
-            renderRightActions={() => (
-              <Animated.View style={{ flexDirection: 'row' }}>
-                <ButtonRemove
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    removeVacancyRef.current?.open();
-                    setRemoveJobById(item.id);
-                  }}
-                >
-                  <Icon name="trash" size={24} color={color.background} />
-                </ButtonRemove>
-              </Animated.View>
-            )}
-          >
-            <Vacancy>
-              <VacancyButton onPress={() => navigate('VacancyDetails', item)}>
-                <VacancyTitle>{item.title.substring(0, 16)}...</VacancyTitle>
-                <VacancyInfo>
-                  <Company>{item.description.substring(0, 5)}...</Company>
-                  <Remuneration>
-                    {item.remuneration_value === 0
-                      ? 'A combinar'
-                      : `R$ ${item.remuneration_value}`}
-                  </Remuneration>
-                </VacancyInfo>
-              </VacancyButton>
-            </Vacancy>
-          </Swipeable>
-        )}
-        ListFooterComponent={
-          slice < myFavoriteJobs.length ? (
-            <Loading size="large" color={color.primary} />
-          ) : (
-            <Separator />
-          )
-        }
-      />
+        />
+      ) : (
+        <LoadingContainer>
+          <TextNotFound>Nenhuma vaga favoritada</TextNotFound>
+        </LoadingContainer>
+      )}
 
       <Modalize ref={removeVacancyRef} adjustToContentHeight>
         <ModalizeContainer>

@@ -25,7 +25,9 @@ interface AuthContextData {
 interface UserProps {
   id: string;
   avatar: string | null;
+  avatar_uri: string | null;
   curriculum: string | null;
+  curriculum_uri: string | null;
   favorites_jobs: [];
   is_active: boolean;
   is_recolocation: boolean;

@@ -14,6 +14,12 @@ export const SafeContainer = styled.SafeAreaView`
   background-color: ${color.background};
   margin-top: ${getStatusBarHeight()}px;
 `;
+
+export const LoadingContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
 export const Header = styled.View`
   align-items: center;
   justify-content: space-between;
@@ -38,7 +44,7 @@ export const Text = styled.Text`
 `;
 export const User = styled.Text`
   font-family: ${font.bold};
-  font-size: ${wp(10)}px;
+  font-size: ${wp(6)}px;
   color: ${color.text.primary};
 `;
 export const Avatar = styled.Image`

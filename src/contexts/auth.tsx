@@ -100,7 +100,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       return {
         error: true,
         message:
-          'Houve um erro ao efetuar login, verifique seus dados e sua conexão com a internet.',
+          'Houve um erro ao efetuar login, verifique suas credenciais e sua conexão com a internet.',
       };
     }
   }, []);

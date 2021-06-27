@@ -76,7 +76,7 @@ export const UpdateVacancyValidateShape = Yup.object().shape({
   state: Yup.string().required('É necessário selecionar um estado'),
   city: Yup.string().required('É necessário selecionar uma cidade'),
   type: Yup.string().required('É nesessário declarar um tipo'),
-  category: Yup.string().required('É nesessário declarar uma categoria'),
+  interests: Yup.string().required('É nesessário declarar algum interesse'),
 });
 
 export const ChangePasswordValidateShape = Yup.object().shape({

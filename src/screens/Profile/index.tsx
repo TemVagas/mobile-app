@@ -65,9 +65,25 @@ export interface JobsProps {
   type: string;
   represents: string;
   fk_user_id: string;
-  category: string;
-  city: string;
-  state: string;
+  category: CategoriesProps;
+  city: CitiesProps;
+}
+
+interface CategoriesProps {
+  id: string;
+  name: string;
+}
+
+interface StatesProps {
+  id: string;
+  sigla: string;
+  name: string;
+}
+
+interface CitiesProps {
+  id: number;
+  name: string;
+  state: StatesProps;
 }
 
 function Profile() {

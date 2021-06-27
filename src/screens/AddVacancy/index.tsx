@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { ScrollView, TextInput, Switch, ToastAndroid, Alert } from 'react-native';
+import { ScrollView, TextInput, Switch, ToastAndroid } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -34,7 +34,6 @@ import { AddVacancyValidateShape } from '../../utils/validation';
 import Input from '../../components/Input';
 import { color } from '../../constants';
 import api from '../../services/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CategoriesProps {
   id: string;
@@ -53,7 +52,7 @@ interface CitiesProps {
 }
 
 function AddVacancy() {
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
 
   const scrollRef = useRef<ScrollView>();
 
@@ -89,20 +88,19 @@ function AddVacancy() {
     async values => {
       ToastAndroid.show('Anunciando vaga.', ToastAndroid.SHORT);
       try {
-
-        const x = await api.post('jobs', {
-          title: values.title,
+        await api.post('jobs', {
           description: values.description,
           email: values.email,
           phone_number: values.phone,
-          type: values.type,
-          category_id: values.category_id,
-          city_name: values.city,
-          state_name: values.state,
           remuneration_value: values.remuneration,
+          title: values.title,
+          type: values.type,
           represents: !values.represents ? ' ' : values.represents,
+          state_name: values.state,
+          city_name: values.city,
+          category_id: values.category_id,
         });
-        goBack();
+        navigate('Profile');
         ToastAndroid.show('Vaga criada.', ToastAndroid.SHORT);
       } catch (err) {
         ToastAndroid.show(
@@ -111,7 +109,7 @@ function AddVacancy() {
         );
       }
     },
-    [goBack],
+    [navigate],
   );
 
   const loadCities = useCallback(async state => {

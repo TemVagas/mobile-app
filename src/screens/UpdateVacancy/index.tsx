@@ -2,12 +2,14 @@
 import React, { createRef, useCallback, useRef, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { ScrollView, TextInput, Switch } from 'react-native';
+import { ScrollView, TextInput, Switch, ToastAndroid } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 
+import axios from 'axios';
+import { useEffect } from 'react';
 import {
   Container,
   Form,
@@ -26,15 +28,30 @@ import { UpdateVacancyValidateShape } from '../../utils/validation';
 import { color } from '../../constants';
 
 import { JobsProps } from '../Profile';
+import api from '../../services/api';
+
+interface CategoriesProps {
+  id: string;
+  name: string;
+}
+
+interface StatesProps {
+  id: string;
+  sigla: string;
+  nome: string;
+}
+
+interface CitiesProps {
+  id: number;
+  nome: string;
+}
 
 function UpdateVacancy() {
   const { params } = useRoute();
 
   const job = params as JobsProps;
 
-  console.log(job);
-
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
 
   const scrollRef = useRef<ScrollView>();
 
@@ -51,6 +68,10 @@ function UpdateVacancy() {
   const toggleRepresentsSwitch = () =>
     setRepresentsIsEnabled(previousState => !previousState);
 
+  const [categories, setCategories] = useState<CategoriesProps[]>([]);
+  const [states, setStates] = useState<StatesProps[]>([]);
+  const [cities, setCities] = useState<CitiesProps[]>([]);
+
   const maskPhone = (value: string) => {
     value = value.replace(/\D/g, '');
     value = value.replace(/^(\d{2})(\d)/g, '($1)$2');
@@ -65,11 +86,59 @@ function UpdateVacancy() {
 
   const handleUpdateVacancy = useCallback(
     async values => {
-      console.log(values);
-      goBack();
+      ToastAndroid.show('Atualizando vaga', ToastAndroid.SHORT);
+
+      try {
+        await api.put(`jobs/${job.id}`, {
+          description: values.description,
+          email: values.email,
+          title: values.title,
+          phone_number: values.phone,
+          category_id: values.interests_id,
+          city_name: values.city,
+          state_name: values.state,
+          remuneration_value: values.remuneration,
+          type: values.type,
+          represents: values.represents,
+        });
+
+        ToastAndroid.show('Vaga atualizada com sucesso', ToastAndroid.SHORT);
+
+        navigate('Profile');
+      } catch (error) {
+        ToastAndroid.show(
+          'Houve um erro ao atualizar vaga, tente mais tarde.',
+          ToastAndroid.SHORT,
+        );
+      }
     },
-    [goBack],
+    [navigate, job.id],
   );
+
+  const loadCities = useCallback(async state => {
+    const response = await axios.get(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state.sigla}/distritos`,
+    );
+    setCities(response.data);
+  }, []);
+
+  useEffect(() => {
+    async function loadCategories() {
+      const response = await api.get('categories');
+      setCategories(response.data);
+    }
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    async function loadStates() {
+      const response = await axios.get(
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados',
+      );
+      setStates(response.data);
+    }
+    loadStates();
+  }, []);
 
   return (
     <Container>
@@ -82,11 +151,12 @@ function UpdateVacancy() {
           email: job.email,
           phone: job.phone_number,
           remuneration: job.remuneration_value,
-          state: job.state,
-          city: job.city,
+          state: job.city.state.name,
+          city: job.city.name,
           type: job.type,
           represents: job.represents,
-          category: job.category,
+          interests: job.category.name,
+          interests_id: job.category.id,
         }}
         onSubmit={values => handleUpdateVacancy(values)}
         validationSchema={UpdateVacancyValidateShape}
@@ -180,12 +250,12 @@ function UpdateVacancy() {
             <Select
               onValueChange={itemValue => setFieldValue('type', itemValue)}
             >
-              <Select.Item label="Declare o tipo da vaga" value="" />
-              <Select.Item label="PJ" value="1" />
-              <Select.Item label="CLT" value="2" />
-              <Select.Item label="Traine" value="3" />
-              <Select.Item label="Estágio" value="4" />
-              <Select.Item label="Freelancer" value="5" />
+              <Select.Item label={job.type} value={job.type} />
+              <Select.Item label="PJ" value="PJ" />
+              <Select.Item label="CLT" value="CLT" />
+              <Select.Item label="Traine" value="Traine" />
+              <Select.Item label="Estágio" value="Estágio" />
+              <Select.Item label="Freelancer" value="Freelancer" />
             </Select>
             {errors.type && touched.type ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -196,30 +266,46 @@ function UpdateVacancy() {
             )}
 
             <Select
-              onValueChange={itemValue => setFieldValue('category', itemValue)}
+              onValueChange={itemValue => {
+                setFieldValue('interests', itemValue.name);
+                setFieldValue('interests_id', itemValue.id);
+              }}
             >
-              <Select.Item label="Declare a categoria da vaga" value="" />
-              <Select.Item label="Medico" value="1" />
-              <Select.Item label="Desenvolvimento de Software" value="2" />
-              <Select.Item label="Nutricionista" value="3" />
-              <Select.Item label="Engenheiro Eletrico" value="4" />
+              <Select.Item
+                label={values.interests}
+                value={{ name: values.interests, id: values.interests_id }}
+              />
+
+              {categories.map(category => (
+                <Select.Item label={category.name} value={category} />
+              ))}
             </Select>
-            {errors.category && touched.category ? (
+            {errors.interests && touched.interests ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
-                {errors.category}
+                {errors.interests}
               </Error>
             ) : (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
             )}
 
             <Select
-              onValueChange={itemValue => setFieldValue('state', itemValue)}
+              onValueChange={itemValue => {
+                setFieldValue('state', itemValue.nome);
+                loadCities(itemValue);
+              }}
             >
-              <Select.Item label="Selecione um estado" value="" />
-              <Select.Item label="Piaui" value="1" />
-              <Select.Item label="São Paulo" value="2" />
-              <Select.Item label="Fortaleza" value="3" />
-              <Select.Item label="Pernambuco" value="4" />
+              <Select.Item
+                label={
+                  values.state[0].toUpperCase() + values.state?.substring(1)
+                }
+                value={values.state}
+              />
+              {states.map(state => (
+                <Select.Item
+                  label={`${state.nome} - ${state.sigla}`}
+                  value={state}
+                />
+              ))}
             </Select>
             {errors.state && touched.state ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>
@@ -232,11 +318,13 @@ function UpdateVacancy() {
             <Select
               onValueChange={itemValue => setFieldValue('city', itemValue)}
             >
-              <Select.Item label="Selecione uma cidade" value="" />
-              <Select.Item label="Picos" value="1" />
-              <Select.Item label="Araripina" value="2" />
-              <Select.Item label="Crato" value="3" />
-              <Select.Item label="Teresina" value="4" />
+              <Select.Item
+                label={values.city[0].toUpperCase() + values.city?.substring(1)}
+                value={values.city}
+              />
+              {cities.map(city => (
+                <Select.Item label={city.nome} value={city.nome} />
+              ))}
             </Select>
             {errors.city && touched.city ? (
               <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }}>

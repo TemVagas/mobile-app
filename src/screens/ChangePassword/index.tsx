@@ -30,17 +30,17 @@ function ChangePassword() {
 
   const handleChangePassword = useCallback(
     async values => {
-      ToastAndroid.show('Alterando senha.', ToastAndroid.SHORT);
+      ToastAndroid.show('Alterando senha', ToastAndroid.SHORT);
       try {
         await api.patch('accounts/password', {
           new_password: values.new_password,
           old_password: values.old_password,
         });
-        ToastAndroid.show('Senha alterada com sucesso.', ToastAndroid.SHORT);
+        ToastAndroid.show('Senha atualizada', ToastAndroid.SHORT);
         navigate('Profile');
       } catch (error) {
         ToastAndroid.show(
-          'Houve um erro ao alterar senha, tente mais tarde.',
+          'Erro, verifique se inseriu a sua senha corretamente',
           ToastAndroid.SHORT,
         );
       }

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, Platform, ScrollView, ToastAndroid } from 'react-native';
@@ -25,8 +25,16 @@ import { AvatarValidateShape } from '../../utils/validation';
 import { color } from '../../constants';
 import api from '../../services/api';
 
+interface ParamsProps {
+  update?: boolean | undefined;
+}
+
 function SubmitAvatar() {
   const { navigate } = useNavigation();
+
+  const { params } = useRoute();
+
+  const { update } = params as ParamsProps;
 
   const [image, setImage] = useState<string>();
   const [fileName, setFileName] = useState<string>('');
@@ -63,9 +71,13 @@ function SubmitAvatar() {
 
       await api.patch('accounts/avatar', data);
 
-      navigate('SubmitCurriculum');
+      if (update) {
+        navigate('Profile');
+      } else {
+        navigate('SubmitCurriculum');
+      }
     },
-    [navigate, image, fileName],
+    [navigate, image, fileName, update],
   );
 
   useEffect(() => {
@@ -87,7 +99,11 @@ function SubmitAvatar() {
     <Container>
       <Form contentContainerStyle={{ alignItems: 'center' }} ref={scrollRef}>
         <HeaderContainer>
-          <Title>Nos envie uma foto sua para seguir para proxima etapa.</Title>
+          <Title>
+            {update
+              ? 'Atualize sua foto de perfil'
+              : 'Nos envie uma foto sua para seguir para proxima etapa.'}
+          </Title>
         </HeaderContainer>
         <Formik
           initialValues={{
@@ -134,7 +150,7 @@ function SubmitAvatar() {
               {errors.image && <Error>{errors.image}</Error>}
 
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-                <ButtonText>PRÓXIMO</ButtonText>
+                <ButtonText>{update ? 'ATUALIZAR' : 'PRÓXIMO'}</ButtonText>
               </Button>
             </>
           )}

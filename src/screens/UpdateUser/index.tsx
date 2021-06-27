@@ -9,16 +9,7 @@ import React, {
   useEffect,
 } from 'react';
 
-import {
-  TextInput,
-  ScrollView,
-  Platform,
-  Alert,
-  Linking,
-  ToastAndroid,
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
+import { TextInput, ScrollView, Linking, ToastAndroid } from 'react-native';
 import { Formik } from 'formik';
 import {
   heightPercentageToDP as hp,
@@ -34,17 +25,14 @@ import {
   GoBackButton,
   Button,
   ButtonText,
-  Content,
   Container,
   Title,
-  StyledImage,
   Form,
-  ButtonCamera,
-  CameraIcon,
   Error,
   Select,
   CreateCurriculum,
   CreateCurriculumText,
+  FooterContainer,
 } from './styles';
 
 import Input from '../../components/Input';
@@ -74,39 +62,12 @@ function UpdateUser() {
 
   const scrollRef = useRef<ScrollView>();
 
-  const emailRef = createRef<TextInput>();
   const describeRef = createRef<TextInput>();
   const phoneRef = createRef<TextInput>();
 
-  const [image, setImage] = useState<string>();
-  const [curriculum, setCurriculum] = useState<string>();
   const [categories, setCategories] = useState<CategoriesProps[]>([]);
   const [states, setStates] = useState<StatesProps[]>([]);
   const [cities, setCities] = useState<CitiesProps[]>([]);
-
-  const pickImage = useCallback(async setFieldValue => {
-    await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    }).then(response => {
-      if (!response.cancelled) {
-        setImage(response.uri);
-        setFieldValue('image', response.uri);
-      }
-    });
-  }, []);
-
-  const pickDocument = useCallback(async () => {
-    await DocumentPicker.getDocumentAsync({
-      type: 'application/pdf',
-      multiple: false,
-    }).then(response => {
-      if (response.type === 'success') {
-        setCurriculum(response.uri);
-      }
-    });
-  }, []);
 
   const maskPhone = (value: string) => {
     value = value.replace(/\D/g, '');
@@ -122,22 +83,11 @@ function UpdateUser() {
 
   const handleUpdateUser = useCallback(
     async values => {
-      ToastAndroid.show('Atualizando perfil.', ToastAndroid.SHORT);
+      ToastAndroid.show('Atualizando perfil', ToastAndroid.SHORT);
 
       try {
-        console.log({
-          name: values.firstname,
-          email: values.email,
-          description: values.about,
-          phone_number: values.phone,
-          category_id: values.interests_id,
-          city_name: values.city,
-          state_name: values.state,
-        });
-
         await api.put('accounts', {
           name: values.firstname,
-          email: values.email,
           description: values.about,
           phone_number: values.phone,
           category_id: values.interests_id,
@@ -145,7 +95,7 @@ function UpdateUser() {
           state_name: values.state,
         });
 
-        ToastAndroid.show('Perfil atualizado com sucesso.', ToastAndroid.SHORT);
+        ToastAndroid.show('Perfil atualizado com sucesso', ToastAndroid.SHORT);
 
         navigate('Profile');
       } catch (error) {
@@ -160,21 +110,6 @@ function UpdateUser() {
 
   const LinkingToCreateCurriculum = useCallback(async () => {
     await Linking.openURL('https://geracurriculo.com.br/');
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const {
-          status,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert(
-            'Precisamos de permissões de para buscar suas fotos na galeria!',
-          );
-        }
-      }
-    })();
   }, []);
 
   const loadCities = useCallback(async state => {
@@ -225,7 +160,6 @@ function UpdateUser() {
             about: '' || data?.description,
             interests_id: '' || data?.category.id,
             interests: '' || data?.category.name,
-            // email: '' || data?.email,
             phone: '' || data?.phone_number,
             state: '' || data?.city.state.name,
             city: '' || data?.city.name,
@@ -243,35 +177,6 @@ function UpdateUser() {
             setFieldValue,
           }) => (
             <>
-              <Content>
-                <ButtonCamera
-                  onPress={() => pickImage(setFieldValue)}
-                  activeOpacity={1}
-                >
-                  <StyledImage
-                    source={{
-                      uri:
-                        image ||
-                        'https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png',
-                    }}
-                    resizeMode="cover"
-                  />
-
-                  <CameraIcon>
-                    <FontAwesome
-                      name="camera-retro"
-                      color={color.background}
-                      size={18}
-                    />
-                  </CameraIcon>
-                </ButtonCamera>
-              </Content>
-              {errors.image && <Error>{errors.image}</Error>}
-
-              <CreateCurriculum onPress={() => navigate('ChangePassword')}>
-                <CreateCurriculumText>Alterar Senha</CreateCurriculumText>
-              </CreateCurriculum>
-
               <Input
                 placeholder="Nome"
                 icon="address-book"
@@ -290,26 +195,6 @@ function UpdateUser() {
                 value={values.firstname}
                 error={touched.firstname && errors.firstname}
               />
-
-              {/* <Input
-                reference={emailRef}
-                placeholder="E-mail"
-                icon="user"
-                returnKeyType="next"
-                keyboardType="default"
-                autoCorrect={false}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                error={touched.email && errors.email}
-                onFocus={() =>
-                  scrollRef.current?.scrollTo({
-                    y: hp(50),
-                    animated: true,
-                  })
-                }
-                onSubmitEditing={() => phoneRef.current?.focus()}
-              /> */}
 
               <Input
                 reference={phoneRef}
@@ -422,33 +307,34 @@ function UpdateUser() {
                 <Error style={{ alignSelf: 'flex-start', marginLeft: wp(6) }} />
               )}
 
-              <Button
-                activeOpacity={0.8}
-                onPress={pickDocument}
-                style={{
-                  backgroundColor: color.primary,
-                }}
-              >
-                {curriculum ? (
-                  <FontAwesome
-                    name="check"
-                    color={color.background}
-                    size={20}
-                  />
-                ) : (
-                  <ButtonText>ATUALIZAR CURRICULO</ButtonText>
-                )}
+              <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
+                <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
               </Button>
 
+              <ButtonText style={{ color: color.primary, marginBottom: 4 }}>
+                OU
+              </ButtonText>
+
+              <FooterContainer>
+                <CreateCurriculum onPress={() => navigate('ChangePassword')}>
+                  <CreateCurriculumText>Alterar Senha</CreateCurriculumText>
+                </CreateCurriculum>
+                <CreateCurriculum
+                  onPress={() => navigate('SubmitAvatar', { update: true })}
+                >
+                  <CreateCurriculumText>Alterar Imagem</CreateCurriculumText>
+                </CreateCurriculum>
+              </FooterContainer>
+              <CreateCurriculum
+                onPress={() => navigate('SubmitCurriculum', { update: true })}
+              >
+                <CreateCurriculumText>Atualizar Curriculo</CreateCurriculumText>
+              </CreateCurriculum>
               <CreateCurriculum onPress={LinkingToCreateCurriculum}>
                 <CreateCurriculumText>
                   Curriculo desatualizado? Clique aqui e gere um novo!
                 </CreateCurriculumText>
               </CreateCurriculum>
-
-              <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-                <ButtonText>SALVAR ALTERAÇÕES</ButtonText>
-              </Button>
             </>
           )}
         </Formik>

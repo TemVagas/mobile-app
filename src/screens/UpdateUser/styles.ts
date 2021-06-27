@@ -14,7 +14,8 @@ export const Container = styled.ScrollView`
 `;
 
 export const HeaderContainer = styled.View`
-  height: ${hp(30)}px;
+  height: ${hp(12)}px;
+  margin-bottom: ${hp(2)}px;
   width: 100%;
   background-color: ${color.primary};
 `;
@@ -105,4 +106,10 @@ export const CreateCurriculumText = styled.Text`
   border-bottom-color: ${color.primary};
   border-bottom-width: 1px;
   font-size: ${wp(3.4)}px;
+`;
+export const FooterContainer = styled.View`
+  flex-direction: row;
+  width: 90%;
+  align-items: center;
+  justify-content: space-around;
 `;

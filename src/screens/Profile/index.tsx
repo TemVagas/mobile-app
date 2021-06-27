@@ -160,7 +160,10 @@ function Profile() {
           <User>{data?.name}</User>
         </TextContainer>
         {data?.avatar_uri && (
-          <Avatar source={{ uri: data?.avatar_uri }} resizeMode="cover" />
+          <Avatar
+            source={{ uri: `https://${data?.avatar_uri}` }}
+            resizeMode="cover"
+          />
         )}
       </Header>
 

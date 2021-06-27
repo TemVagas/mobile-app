@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useCallback, useRef, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import { ScrollView, Linking, ToastAndroid } from 'react-native';
@@ -21,8 +21,16 @@ import {
 
 import api from '../../services/api';
 
+interface ParamsProps {
+  update?: boolean | undefined;
+}
+
 function SubmitCurriculum() {
   const { navigate } = useNavigation();
+
+  const { params } = useRoute();
+
+  const { update } = params as ParamsProps;
 
   const [curriculum, setCurriculum] = useState<any>();
 
@@ -58,11 +66,22 @@ function SubmitCurriculum() {
 
       await api.patch('accounts/curriculum', data);
 
-      navigate('SingIn');
-      ToastAndroid.show('Cadastro concluido com sucesso.', ToastAndroid.SHORT);
+      if (update) {
+        navigate('Profile');
+        ToastAndroid.show(
+          'Curriculo atualizado com sucesso.',
+          ToastAndroid.SHORT,
+        );
+      } else {
+        navigate('SingIn');
+        ToastAndroid.show(
+          'Cadastro concluido com sucesso.',
+          ToastAndroid.SHORT,
+        );
+      }
     } catch (err) {
       ToastAndroid.show(
-        'Houve um erro ao cadastrar-se, tente mais tarde.',
+        'Houve um erro, tente novamente mais tarde.',
         ToastAndroid.SHORT,
       );
     }
@@ -77,7 +96,11 @@ function SubmitCurriculum() {
       <Form contentContainerStyle={{ alignItems: 'center' }} ref={scrollRef}>
         <HeaderContainer>
           <Header>
-            <Title>Envie seu curriculo para concluir o seu cadastro!</Title>
+            <Title>
+              {update
+                ? 'Nos envie o seu curriculo para podermos atualiza-lo'
+                : 'Envie seu curriculo para concluir o seu cadastro!'}
+            </Title>
           </Header>
         </HeaderContainer>
 
@@ -115,7 +138,7 @@ function SubmitCurriculum() {
           </CreateCurriculumText>
         </CreateCurriculum>
         <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-          <ButtonText>CONCLUIR</ButtonText>
+          <ButtonText>{update ? 'Atualizar' : 'CONCLUIR'}</ButtonText>
         </Button>
       </Form>
     </Container>

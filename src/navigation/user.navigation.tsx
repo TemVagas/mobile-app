@@ -12,6 +12,8 @@ import UpdateVacancy from '../screens/UpdateVacancy';
 import ChangePassword from '../screens/ChangePassword';
 import MyDetails from '../screens/MyDetails';
 import VacancyDetails from '../screens/VacancyDetails';
+import SubmitAvatar from '../screens/SubmitAvatar';
+import SubmitCurriculum from '../screens/SubmitCurriculum';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +34,8 @@ const UserNavigation: React.FC = () => {
       <Stack.Screen name="MyDetails" component={MyDetails} />
       <Stack.Screen name="VacancyDetails" component={VacancyDetails} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="SubmitAvatar" component={SubmitAvatar} />
+      <Stack.Screen name="SubmitCurriculum" component={SubmitCurriculum} />
     </Stack.Navigator>
   );
 };

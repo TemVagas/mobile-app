@@ -17,10 +17,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { Formik } from 'formik';
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 import axios from 'axios';
 import {

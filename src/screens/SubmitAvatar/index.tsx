@@ -34,7 +34,14 @@ function SubmitAvatar() {
 
   const { params } = useRoute();
 
-  const { update } = params as ParamsProps;
+  const [updateParams, setUpdateParms] = useState<boolean | undefined>(false);
+
+  useEffect(() => {
+    if (params) {
+      const { update } = params as ParamsProps;
+      setUpdateParms(update);
+    }
+  }, [params]);
 
   const [image, setImage] = useState<string>();
   const [fileName, setFileName] = useState<string>('');
@@ -59,7 +66,7 @@ function SubmitAvatar() {
 
   const handleSignUp = useCallback(
     async values => {
-      ToastAndroid.show('Enviando imagem.', ToastAndroid.SHORT);
+      ToastAndroid.show('Enviando imagem, aguarde...', ToastAndroid.SHORT);
       // eslint-disable-next-line no-undef
       const data = new FormData();
 
@@ -69,15 +76,28 @@ function SubmitAvatar() {
         uri: image,
       } as any);
 
-      await api.patch('accounts/avatar', data);
-
-      if (update) {
-        navigate('Profile');
-      } else {
-        navigate('SubmitCurriculum');
-      }
+      api
+        .patch('accounts/avatar', data)
+        .then(() => {
+          if (updateParams) {
+            ToastAndroid.show(
+              'Imagem atualizada com sucesso.',
+              ToastAndroid.SHORT,
+            );
+            navigate('Profile');
+          } else {
+            ToastAndroid.show(
+              'Imagem enviada com sucesso.',
+              ToastAndroid.SHORT,
+            );
+            navigate('SubmitCurriculum');
+          }
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+        });
     },
-    [navigate, image, fileName, update],
+    [navigate, image, fileName, updateParams],
   );
 
   useEffect(() => {
@@ -100,7 +120,7 @@ function SubmitAvatar() {
       <Form contentContainerStyle={{ alignItems: 'center' }} ref={scrollRef}>
         <HeaderContainer>
           <Title>
-            {update
+            {updateParams
               ? 'Atualize sua foto de perfil'
               : 'Nos envie uma foto sua para seguir para proxima etapa.'}
           </Title>
@@ -150,7 +170,9 @@ function SubmitAvatar() {
               {errors.image && <Error>{errors.image}</Error>}
 
               <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-                <ButtonText>{update ? 'ATUALIZAR' : 'PRÓXIMO'}</ButtonText>
+                <ButtonText>
+                  {updateParams ? 'ATUALIZAR' : 'PRÓXIMO'}
+                </ButtonText>
               </Button>
             </>
           )}

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
@@ -28,9 +28,16 @@ interface ParamsProps {
 function SubmitCurriculum() {
   const { navigate } = useNavigation();
 
+  const [updateParams, setUpdateParms] = useState<boolean | undefined>(false);
+
   const { params } = useRoute();
 
-  const { update } = params as ParamsProps;
+  useEffect(() => {
+    if (params) {
+      const { update } = params as ParamsProps;
+      setUpdateParms(update);
+    }
+  }, [params]);
 
   const [curriculum, setCurriculum] = useState<any>();
 
@@ -53,39 +60,38 @@ function SubmitCurriculum() {
       ToastAndroid.show('É necessário enviar curriculo.', ToastAndroid.SHORT);
       return;
     }
-    try {
-      ToastAndroid.show('Enviando curriculo.', ToastAndroid.SHORT);
-      // eslint-disable-next-line no-undef
-      const data = new FormData();
 
-      data.append('curriculum', {
-        name: 'curriculo',
-        type: 'application/pdf',
-        uri: curriculum.uri,
-      } as any);
+    ToastAndroid.show('Enviando curriculo, aguarde...', ToastAndroid.SHORT);
+    // eslint-disable-next-line no-undef
+    const data = new FormData();
 
-      await api.patch('accounts/curriculum', data);
+    data.append('curriculum', {
+      name: 'curriculo',
+      type: 'application/pdf',
+      uri: curriculum.uri,
+    } as any);
 
-      if (update) {
-        navigate('Profile');
-        ToastAndroid.show(
-          'Curriculo atualizado com sucesso.',
-          ToastAndroid.SHORT,
-        );
-      } else {
-        navigate('SingIn');
-        ToastAndroid.show(
-          'Cadastro concluido com sucesso.',
-          ToastAndroid.SHORT,
-        );
-      }
-    } catch (err) {
-      ToastAndroid.show(
-        'Houve um erro, tente novamente mais tarde.',
-        ToastAndroid.SHORT,
-      );
-    }
-  }, [navigate, curriculum]);
+    await api
+      .patch('accounts/curriculum', data)
+      .then(() => {
+        if (updateParams) {
+          navigate('Profile');
+          ToastAndroid.show(
+            'Curriculo atualizado com sucesso.',
+            ToastAndroid.SHORT,
+          );
+        } else {
+          navigate('SingIn');
+          ToastAndroid.show(
+            'Cadastro concluido com sucesso.',
+            ToastAndroid.SHORT,
+          );
+        }
+      })
+      .catch(error => {
+        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      });
+  }, [navigate, curriculum, updateParams]);
 
   const LinkingToCreateCurriculum = useCallback(async () => {
     await Linking.openURL('https://geracurriculo.com.br/');
@@ -97,7 +103,7 @@ function SubmitCurriculum() {
         <HeaderContainer>
           <Header>
             <Title>
-              {update
+              {updateParams
                 ? 'Nos envie o seu curriculo para podermos atualiza-lo'
                 : 'Envie seu curriculo para concluir o seu cadastro!'}
             </Title>
@@ -138,7 +144,7 @@ function SubmitCurriculum() {
           </CreateCurriculumText>
         </CreateCurriculum>
         <Button activeOpacity={0.8} onPress={() => handleSubmit()}>
-          <ButtonText>{update ? 'Atualizar' : 'CONCLUIR'}</ButtonText>
+          <ButtonText>{updateParams ? 'Atualizar' : 'CONCLUIR'}</ButtonText>
         </Button>
       </Form>
     </Container>

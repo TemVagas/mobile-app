@@ -31,19 +31,18 @@ function ChangePassword() {
   const handleChangePassword = useCallback(
     async values => {
       ToastAndroid.show('Alterando senha', ToastAndroid.SHORT);
-      try {
-        await api.patch('accounts/password', {
+      api
+        .patch('accounts/password', {
           new_password: values.new_password,
           old_password: values.old_password,
+        })
+        .then(() => {
+          ToastAndroid.show('Senha atualizada', ToastAndroid.SHORT);
+          navigate('Profile');
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
         });
-        ToastAndroid.show('Senha atualizada', ToastAndroid.SHORT);
-        navigate('Profile');
-      } catch (error) {
-        ToastAndroid.show(
-          'Erro, verifique se inseriu a sua senha corretamente',
-          ToastAndroid.SHORT,
-        );
-      }
     },
     [navigate],
   );

@@ -93,7 +93,6 @@ function Profile() {
   const [isLoading, setIsLoading] = useState(true);
 
   const { navigate } = useNavigation();
-  const { removeSteps } = useFirstSteps();
   const { signOut, data, updateUser } = useAuth();
 
   const [removeJobById, setRemoveJobById] = useState('');
@@ -116,44 +115,55 @@ function Profile() {
 
   const handleDeleteAccount = useCallback(async () => {
     ToastAndroid.show('Deletando a sua conta.', ToastAndroid.SHORT);
-    try {
-      await api.delete('accounts');
-      ToastAndroid.show('Conta deletada com sucesso.', ToastAndroid.SHORT);
-      removeSteps();
-    } catch {
-      ToastAndroid.show(
-        'Houve um erro ao deletar sua conta, tente mais tarde.',
-        ToastAndroid.SHORT,
-      );
-    }
-  }, [removeSteps]);
+    api
+      .delete('accounts')
+      .then(() => {
+        ToastAndroid.show('Conta deletada com sucesso.', ToastAndroid.SHORT);
+        signOut();
+      })
+      .catch(error => {
+        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      });
+  }, [signOut]);
 
   useEffect(() => {
     async function getUser() {
       setIsLoading(true);
-      const response = await api.get('/accounts/infos');
-
-      updateUser(response.data);
-      setIsEnabled(response.data.is_recolocation);
-      setIsLoading(false);
+      api
+        .get('/accounts/infos')
+        .then(response => {
+          updateUser(response.data);
+          setIsEnabled(response.data.is_recolocation);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+        });
     }
     getUser();
   }, [focused, updateUser]);
 
   async function isRecolocation() {
-    try {
-      const response = await api.patch(`/accounts/recolocation`);
-
-      ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-    } catch (error) {
-      ToastAndroid.show('Houve um erro, tente mais tarde.', ToastAndroid.SHORT);
-    }
+    api
+      .patch(`/accounts/recolocation`)
+      .then(response => {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      })
+      .catch(error => {
+        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      });
   }
 
   useEffect(() => {
     async function getMyJobs() {
-      const response = await api.get('/accounts/jobs');
-      setMyJobs(response.data);
+      api
+        .get('/accounts/jobs')
+        .then(response => {
+          setMyJobs(response.data);
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+        });
     }
     getMyJobs();
   }, [focused]);

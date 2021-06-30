@@ -3,6 +3,8 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import { Keyboard } from 'react-native';
 
+import { useAuth } from '../../contexts/auth';
+
 import {
   Container,
   Logo,

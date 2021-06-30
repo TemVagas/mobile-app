@@ -87,8 +87,8 @@ function AddVacancy() {
   const handleCreateVacancy = useCallback(
     async values => {
       ToastAndroid.show('Anunciando vaga.', ToastAndroid.SHORT);
-      try {
-        await api.post('jobs', {
+      api
+        .post('jobs', {
           description: values.description,
           email: values.email,
           phone_number: values.phone,
@@ -99,15 +99,14 @@ function AddVacancy() {
           state_name: values.state,
           city_name: values.city,
           category_id: values.category_id,
+        })
+        .then(() => {
+          navigate('Profile');
+          ToastAndroid.show('Vaga criada.', ToastAndroid.SHORT);
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
         });
-        navigate('Profile');
-        ToastAndroid.show('Vaga criada.', ToastAndroid.SHORT);
-      } catch (err) {
-        ToastAndroid.show(
-          'Houve um erro ao anunciar vaga, tente mais tarde.',
-          ToastAndroid.SHORT,
-        );
-      }
     },
     [navigate],
   );

@@ -75,8 +75,8 @@ function SignUp() {
   const handleSignUp = useCallback(
     async values => {
       ToastAndroid.show('Enviando informações.', ToastAndroid.SHORT);
-      try {
-        await api.post('accounts', {
+      api
+        .post('accounts', {
           category_id: values.interests_id,
           description: values.about,
           email: values.email.toLowerCase(),
@@ -85,28 +85,34 @@ function SignUp() {
           phone_number: values.phone,
           city_name: values.city,
           state_name: values.state,
+        })
+        .then(() => {
+          api
+            .post('sessions', {
+              email: values.email.toLowerCase(),
+              password: values.password,
+            })
+            .then(response => {
+              const { token } = response.data;
+
+              api.defaults.headers.Authorization = `Bearer ${token}`;
+
+              ToastAndroid.show(
+                'Primeira etapa do cadastro concluida.',
+                ToastAndroid.SHORT,
+              );
+              navigate('SubmitAvatar');
+            })
+            .catch(error => {
+              ToastAndroid.show(
+                error.response.data.message,
+                ToastAndroid.SHORT,
+              );
+            });
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
         });
-
-        const response = await api.post('sessions', {
-          email: values.email.toLowerCase(),
-          password: values.password,
-        });
-
-        const { token } = response.data;
-
-        api.defaults.headers.Authorization = `Bearer ${token}`;
-
-        ToastAndroid.show(
-          'Primeira etapa do cadastro concluida.',
-          ToastAndroid.SHORT,
-        );
-        navigate('SubmitAvatar');
-      } catch (err) {
-        ToastAndroid.show(
-          'Houve um erro ao cadastrar-se, tente mais tarde.',
-          ToastAndroid.SHORT,
-        );
-      }
     },
     [navigate],
   );

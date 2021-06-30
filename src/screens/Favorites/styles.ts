@@ -134,7 +134,7 @@ export const LoadingContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  margin-top: ${hp(40)}px;
+  /* margin-top: ${hp(40)}px; */
 `;
 export const TextNotFound = styled.Text`
   font-family: ${font.regular};

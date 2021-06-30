@@ -85,25 +85,26 @@ function UpdateUser() {
     async values => {
       ToastAndroid.show('Atualizando perfil', ToastAndroid.SHORT);
 
-      try {
-        await api.put('accounts', {
+      api
+        .put('accounts', {
           name: values.firstname,
           description: values.about,
           phone_number: values.phone,
           category_id: values.interests_id,
           city_name: values.city,
           state_name: values.state,
+        })
+        .then(() => {
+          ToastAndroid.show(
+            'Perfil atualizado com sucesso',
+            ToastAndroid.SHORT,
+          );
+
+          navigate('Profile');
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
         });
-
-        ToastAndroid.show('Perfil atualizado com sucesso', ToastAndroid.SHORT);
-
-        navigate('Profile');
-      } catch (error) {
-        ToastAndroid.show(
-          'Houve um erro ao atualizar perfil, tente mais tarde.',
-          ToastAndroid.SHORT,
-        );
-      }
     },
     [navigate],
   );

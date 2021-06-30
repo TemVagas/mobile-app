@@ -88,8 +88,8 @@ function UpdateVacancy() {
     async values => {
       ToastAndroid.show('Atualizando vaga', ToastAndroid.SHORT);
 
-      try {
-        await api.put(`jobs/${job.id}`, {
+      api
+        .put(`jobs/${job.id}`, {
           description: values.description,
           email: values.email,
           title: values.title,
@@ -100,17 +100,15 @@ function UpdateVacancy() {
           remuneration_value: values.remuneration,
           type: values.type,
           represents: values.represents,
+        })
+        .then(() => {
+          ToastAndroid.show('Vaga atualizada com sucesso', ToastAndroid.SHORT);
+
+          navigate('Profile');
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
         });
-
-        ToastAndroid.show('Vaga atualizada com sucesso', ToastAndroid.SHORT);
-
-        navigate('Profile');
-      } catch (error) {
-        ToastAndroid.show(
-          'Houve um erro ao atualizar vaga, tente mais tarde.',
-          ToastAndroid.SHORT,
-        );
-      }
     },
     [navigate, job.id],
   );

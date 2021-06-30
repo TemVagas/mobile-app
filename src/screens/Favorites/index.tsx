@@ -54,9 +54,16 @@ function Favorites() {
   useEffect(() => {
     async function getMyFavoritesJobs() {
       setIsLoading(true);
-      const response = await api.get(`/accounts/favorites`);
-      setMyFavoriteJobs(response.data);
-      setIsLoading(false);
+      api
+        .get(`/accounts/favorites`)
+        .then(response => {
+          setMyFavoriteJobs(response.data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+          setIsLoading(false);
+        });
     }
     getMyFavoritesJobs();
   }, [focused, data]);

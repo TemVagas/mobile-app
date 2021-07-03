@@ -31,6 +31,7 @@ export const Title = styled.Text`
   font-size: ${wp(4)}px;
   color: ${color.primary};
   text-align: justify;
+  align-self: flex-start;
 `;
 export const SubtitleContainer = styled.View`
   flex-direction: row;

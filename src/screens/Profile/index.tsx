@@ -138,6 +138,7 @@ function Profile() {
         })
         .catch(error => {
           ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+          signOut();
         });
     }
     getUser();

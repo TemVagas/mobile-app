@@ -12,7 +12,44 @@ import {
   RemunerationContainer,
 } from './styles';
 
-function VacancyCard() {
+interface ItemProps {
+  item: JobsProps;
+}
+
+interface JobsProps {
+  category: CategoryProps;
+  city: CityProps;
+  id: string;
+  name: string;
+  description: string;
+  email: string;
+  fk_category_id: string;
+  fk_user_id: string;
+  phone_number: string;
+  remuneration_value: number;
+  represents: string;
+  title: string;
+  type: string;
+  updated_at: string;
+}
+
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
+interface CityProps {
+  id: string;
+  name: string;
+  state: StateProps;
+}
+
+interface StateProps {
+  id: string;
+  name: string;
+}
+
+function VacancyCard({ item }: ItemProps) {
   const { navigate } = useNavigation();
 
   const handleNavigate = useCallback(
@@ -29,11 +66,15 @@ function VacancyCard() {
     >
       <Image source={{ uri: 'https://picsum.photos/200' }} />
       <Info>
-        <Title>Usuário está buscando por Visual Designer</Title>
+        <Title>{item.title}</Title>
         <SubtitleContainer>
-          <Subtitle>Spotfy</Subtitle>
+          <Subtitle>{item.represents !== ' ' && item.represents}</Subtitle>
           <RemunerationContainer>
-            <Remuneration>A combinar</Remuneration>
+            <Remuneration>
+              {item.remuneration_value === 0
+                ? 'A combinar'
+                : item.remuneration_value}
+            </Remuneration>
           </RemunerationContainer>
         </SubtitleContainer>
       </Info>

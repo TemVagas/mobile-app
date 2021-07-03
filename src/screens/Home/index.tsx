@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/native';
-import { Keyboard } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { ActivityIndicator, ToastAndroid } from 'react-native';
 
 import { useAuth } from '../../contexts/auth';
 
 import {
   Container,
   Logo,
-  Search,
-  SearchContainer,
   Icon,
-  Button,
   NavigateContainer,
   ShadowList,
   ShadowMap,
@@ -30,44 +30,50 @@ import {
   InfoWage,
   InfoCompanyContainer,
   InfoWageContainer,
+  LoadingContainer,
+  Recolocation,
+  NotFoundContainer,
+  SafeContainer,
 } from './styles';
 
 import { color } from '../../constants';
 
 import VacancyCard from '../../components/Card/vacancy';
 import RecolocationCard from '../../components/Card/recolocation';
+import api from '../../services/api';
 
-const data = [
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-];
+export interface JobsProps {
+  category: CategoryProps;
+  city: CityProps;
+  id: string;
+  description: string;
+  email: string;
+  fk_category_id: string;
+  fk_user_id: string;
+  name: string;
+  phone_number: string;
+  remuneration_value: number;
+  represents: string;
+  title: string;
+  type: string;
+  updated_at: string;
+}
 
-const interestCard = [
-  { id: '1', icon: 'phone', company: 'Uber', wage: 'R$100' },
-  { id: '2', icon: 'map-marker', company: 'Uber', wage: 'R$5000' },
-  { id: '3', icon: 'briefcase', company: 'Uber', wage: 'R$5000' },
-  { id: '4', icon: 'address-card', company: 'Uber', wage: 'R$45000' },
-  { id: '5', icon: 'address-card', company: 'Uber', wage: 'R$2500' },
-  { id: '6', icon: 'address-card', company: 'Uber', wage: 'A combinar' },
-];
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
+interface CityProps {
+  id: string;
+  name: string;
+  state: StateProps;
+}
+
+interface StateProps {
+  id: string;
+  name: string;
+}
 
 export interface ItemsProps {
   id: string;
@@ -77,13 +83,30 @@ export interface ItemsProps {
   wage: string;
 }
 
+interface RecolocationProps {
+  category: CategoryProps;
+  city: CityProps;
+  description: string;
+  id: string;
+  name: string;
+  email: string;
+  fk_category_id: string;
+  fk_user_id: string;
+}
+
 function JobVacancies() {
+  const focused = useIsFocused();
   const { navigate } = useNavigation();
 
-  const [search, setSearch] = useState('');
+  const { data, signed } = useAuth();
+
   const [navigation, setNavigation] = useState('list');
   const [slice, setSlice] = useState(6);
-  const [keyboardStatus, setKeyboardStatus] = useState<boolean>();
+  const [jobs, setJobs] = useState<JobsProps[]>([]);
+  const [recolocations, setRecolocations] = useState<RecolocationProps[]>([]);
+  const [jobsInterested, setJobsInterested] = useState<JobsProps[]>([]);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNavigate = useCallback(
     route => {
@@ -92,110 +115,136 @@ function JobVacancies() {
     [navigate],
   );
 
-  const keyboardDidShow = () => setKeyboardStatus(true);
-  const keyboardDidHide = () => setKeyboardStatus(false);
+  const interestedJobs = useCallback(() => {
+    api
+      .get(`jobs?category_id=${data?.category.id}`)
+      .then(interest => {
+        setJobsInterested(interest.data);
+      })
+      .catch(error => {
+        setIsLoading(false);
+        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      });
+  }, [data?.category.id]);
+
+  async function getJobs() {
+    api
+      .get('jobs')
+      .then(response => {
+        setJobs(response.data);
+      })
+      .catch(error => {
+        setIsLoading(false);
+        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      });
+  }
+
+  async function getRecolocations() {
+    api
+      .get('/accounts/recolocation')
+      .then(response => {
+        setRecolocations(response.data);
+      })
+      .catch(error => {
+        setIsLoading(false);
+        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+      });
+  }
+
+  console.log(recolocations);
 
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', keyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', keyboardDidHide);
+    setIsLoading(true);
 
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', keyboardDidShow);
-      Keyboard.removeListener('keyboardDidHide', keyboardDidHide);
-    };
-  }, []);
+    getJobs();
+    getRecolocations();
+    if (signed) {
+      interestedJobs();
+    }
+    setIsLoading(false);
+  }, [focused, data, signed, interestedJobs]);
+
+  if (isLoading) {
+    return (
+      <SafeContainer>
+        <LoadingContainer>
+          <ActivityIndicator color={color.primary} size="large" />
+        </LoadingContainer>
+      </SafeContainer>
+    );
+  }
 
   return (
     <Container>
       <Logo>JobFinder</Logo>
-      <SearchContainer>
-        <Search
-          placeholder="Buscar"
-          placeholderTextColor={color.text.tertiary}
-          value={search}
-          onChangeText={text => setSearch(text)}
-        />
-        {search?.length > 1 ? (
-          <Button onPress={() => setSearch('')}>
-            <Icon name="times" size={18} color={color.text.tertiary} />
-          </Button>
-        ) : (
-          <Icon name="search" size={18} color={color.text.tertiary} />
-        )}
-      </SearchContainer>
 
-      {!keyboardStatus && (
-        <NavigateContainer>
-          <ShadowList navigation={navigation}>
-            <ButtonNavigate
-              onPress={() => {
-                setNavigation('list');
-                setSlice(6);
-              }}
-              activeOpacity={0.8}
-            >
-              <Icon
-                size={20}
-                color={
-                  navigation === 'list'
-                    ? color.background
-                    : color.text.secondary
-                }
-                name="list"
-              />
-              <TextList navigation={navigation}>Vagas</TextList>
-            </ButtonNavigate>
-          </ShadowList>
-          <ShadowMap navigation={navigation}>
-            <ButtonNavigate
-              onPress={() => {
-                setNavigation('recolocation');
-                setSlice(6);
-              }}
-              activeOpacity={0.8}
-            >
-              <Icon
-                size={20}
-                color={
-                  navigation === 'recolocation'
-                    ? color.background
-                    : color.text.secondary
-                }
-                name="briefcase"
-              />
-              <TextMap navigation={navigation}>Recolocação</TextMap>
-            </ButtonNavigate>
-          </ShadowMap>
-        </NavigateContainer>
-      )}
+      <NavigateContainer>
+        <ShadowList navigation={navigation}>
+          <ButtonNavigate
+            onPress={() => {
+              setNavigation('list');
+              setSlice(6);
+            }}
+            activeOpacity={0.8}
+          >
+            <Icon
+              size={20}
+              color={
+                navigation === 'list' ? color.background : color.text.secondary
+              }
+              name="list"
+            />
+            <TextList navigation={navigation}>Vagas</TextList>
+          </ButtonNavigate>
+        </ShadowList>
+        <ShadowMap navigation={navigation}>
+          <ButtonNavigate
+            onPress={() => {
+              setNavigation('recolocation');
+              setSlice(6);
+            }}
+            activeOpacity={0.8}
+          >
+            <Icon
+              size={20}
+              color={
+                navigation === 'recolocation'
+                  ? color.background
+                  : color.text.secondary
+              }
+              name="briefcase"
+            />
+            <TextMap navigation={navigation}>Recolocação</TextMap>
+          </ButtonNavigate>
+        </ShadowMap>
+      </NavigateContainer>
 
-      {navigation === 'list' && !keyboardStatus && search.length === 0 && (
+      {signed && navigation === 'list' && jobsInterested.length !== 0 && (
         <>
           <Interest>Do seu interesse</Interest>
           <CardListInterest
             showsHorizontalScrollIndicator={false}
             horizontal
-            data={interestCard}
+            data={jobsInterested}
             keyExtractor={info => info.id}
             renderItem={({ item: info }) => {
               return (
                 <CardInterest
-                  key={info.id}
                   activeOpacity={0.8}
                   onPress={() => handleNavigate('VacancyDetails')}
                 >
-                  <TextCard>
-                    Usuário está buscando por Product Designer
-                  </TextCard>
+                  <TextCard>{info.title}</TextCard>
                   <Info>
-                    <InfoCompanyContainer>
-                      <InfoCompany>{info.company}</InfoCompany>
-                    </InfoCompanyContainer>
+                    {info.represents !== ' ' && (
+                      <InfoCompanyContainer>
+                        <InfoCompany>{info.represents}</InfoCompany>
+                      </InfoCompanyContainer>
+                    )}
                     <InfoWageContainer>
                       <InfoWage>
-                        {info.wage.length > 6
-                          ? `${info.wage.substring(0, 5)}...`
-                          : info.wage}
+                        {info.remuneration_value !== 0
+                          ? info.remuneration_value
+                          : 'A combinar'}
                       </InfoWage>
                     </InfoWageContainer>
                   </Info>
@@ -205,33 +254,84 @@ function JobVacancies() {
           />
         </>
       )}
-      <List
-        contentContainerStyle={{
-          width: wp(100),
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        onEndReached={() => {
-          if (slice < data.length) {
-            setSlice(state => state + 6);
+
+      {jobs.length === 0 && navigation === 'list' && (
+        <LoadingContainer>
+          <Recolocation>Nenhuma vaga encontrada</Recolocation>
+        </LoadingContainer>
+      )}
+
+      {jobs.length !== 0 && navigation === 'list' && (
+        <List
+          contentContainerStyle={{
+            width: wp(100),
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onEndReached={() => {
+            if (slice < jobs.length) {
+              setSlice(state => state + 6);
+            }
+          }}
+          onEndReachedThreshold={0.1}
+          showsVerticalScrollIndicator={false}
+          data={jobs.slice(0, slice)}
+          keyExtractor={(item: JobsProps) => item.id}
+          renderItem={({ item }) => {
+            return navigation === 'list' ? (
+              <VacancyCard item={item} />
+            ) : (
+              <RecolocationCard />
+            );
+          }}
+          ItemSeparatorComponent={() => <Separator />}
+          ListFooterComponent={
+            slice < jobs.length ? (
+              <Loading size="small" color={color.primary} />
+            ) : (
+              <Separator />
+            )
           }
-        }}
-        onEndReachedThreshold={0.1}
-        showsVerticalScrollIndicator={false}
-        data={data.slice(0, slice)}
-        keyExtractor={item => String(item)}
-        renderItem={() => {
-          return navigation === 'list' ? <VacancyCard /> : <RecolocationCard />;
-        }}
-        ItemSeparatorComponent={() => <Separator />}
-        ListFooterComponent={
-          slice < data.length ? (
-            <Loading size="small" color={color.primary} />
-          ) : (
-            <Separator />
-          )
-        }
-      />
+        />
+      )}
+
+      {recolocations.length === 0 && navigation !== 'list' && (
+        <LoadingContainer style={{ height: hp(80) }}>
+          <Recolocation>Ninguem esta buscando</Recolocation>
+          <Recolocation>por recolocação</Recolocation>
+        </LoadingContainer>
+      )}
+
+      {recolocations.length !== 0 && navigation !== 'list' && (
+        <List
+          contentContainerStyle={{
+            width: wp(100),
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onEndReached={() => {
+            if (slice < recolocations.length) {
+              setSlice(state => state + 6);
+            }
+          }}
+          onEndReachedThreshold={0.1}
+          showsVerticalScrollIndicator={false}
+          data={recolocations.slice(0, slice)}
+          keyExtractor={(item: RecolocationProps) => item.id}
+          renderItem={({ item }) => {
+            console.log(item.name);
+            return <RecolocationCard />;
+          }}
+          ItemSeparatorComponent={() => <Separator />}
+          ListFooterComponent={
+            slice < jobs.length ? (
+              <Loading size="small" color={color.primary} />
+            ) : (
+              <Separator />
+            )
+          }
+        />
+      )}
     </Container>
   );
 }

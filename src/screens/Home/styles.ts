@@ -6,7 +6,7 @@ import {
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { FontAwesome } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
-import { ItemsProps } from './index';
+import { JobsProps } from './index';
 
 import { color, font } from '../../constants';
 
@@ -136,7 +136,7 @@ export const Interest = styled.Text`
 `;
 
 export const CardListInterest = styled(
-  FlatList as new () => FlatList<ItemsProps>,
+  FlatList as new () => FlatList<JobsProps>,
 )`
   width: 100%;
   height: ${hp(50)}px;
@@ -147,14 +147,14 @@ export const CardInterest = styled.TouchableOpacity`
   flex: 1;
   background-color: ${color.primary};
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   border-radius: ${hp(2)}px;
 `;
 export const Info = styled.View`
   align-items: center;
   flex-direction: row;
   width: 100%;
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin-top: ${hp(1)}px;
 `;
 export const TextCard = styled.Text`
@@ -162,21 +162,23 @@ export const TextCard = styled.Text`
   font-family: ${font.medium};
   font-size: ${wp(4.5)}px;
   color: ${color.background};
+  align-self: flex-start;
 `;
 export const InfoCompany = styled.Text`
   color: ${color.background};
   font-family: ${font.bold};
-  font-size: ${hp(2.5)}px;
+  font-size: ${hp(2)}px;
 `;
 export const InfoWage = styled.Text`
   color: ${color.background};
   font-family: ${font.bold};
+  font-size: ${wp(3)}px;
 `;
 export const InfoCompanyContainer = styled.View`
   background-color: ${color.text.secondary};
   align-items: center;
   justify-content: center;
-  width: 35%;
+  width: 38%;
   height: ${hp(7)}px;
   border-radius: ${hp(1)}px;
 `;
@@ -184,7 +186,31 @@ export const InfoWageContainer = styled.View`
   background-color: ${color.text.secondary};
   align-items: center;
   justify-content: center;
-  width: 35%;
+  width: 38%;
   height: ${hp(5)}px;
   border-radius: ${hp(1)}px;
+`;
+export const SafeContainer = styled.SafeAreaView`
+  flex: 1;
+  background-color: ${color.background};
+  margin-top: ${getStatusBarHeight()}px;
+`;
+
+export const NotFoundContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: ${hp(20)}px;
+  /* margin-top: ${hp(40)}px; */
+`;
+
+export const LoadingContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: ${hp(43)}px;
+  /* margin-top: ${hp(40)}px; */
+`;
+export const Recolocation = styled.Text`
+  font-family: ${font.regular};
+  font-size: ${wp(5)}px;
+  color: ${color.text.secondary};
 `;

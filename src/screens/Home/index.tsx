@@ -33,6 +33,7 @@ import {
   LoadingContainer,
   Recolocation,
   NotFoundContainer,
+  CardImage,
   SafeContainer,
 } from './styles';
 
@@ -57,6 +58,12 @@ export interface JobsProps {
   title: string;
   type: string;
   updated_at: string;
+  user: UserProps;
+}
+
+interface UserProps {
+  avatar_uri: string;
+  curriculum_uri: string;
 }
 
 interface CategoryProps {
@@ -116,16 +123,18 @@ function JobVacancies() {
   );
 
   const interestedJobs = useCallback(() => {
-    api
-      .get(`jobs?category_id=${data?.category.id}`)
-      .then(interest => {
-        setJobsInterested(interest.data);
-      })
-      .catch(error => {
-        setIsLoading(false);
-        ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
-      });
-  }, [data?.category.id]);
+    if (signed) {
+      api
+        .get(`jobs?category_id=${data?.category.id}`)
+        .then(interest => {
+          setJobsInterested(interest.data);
+        })
+        .catch(error => {
+          setIsLoading(false);
+          ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+        });
+    }
+  }, [data?.category.id, signed]);
 
   async function getJobs() {
     api
@@ -150,8 +159,6 @@ function JobVacancies() {
         ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
       });
   }
-
-  console.log(recolocations);
 
   useEffect(() => {
     setIsLoading(true);
@@ -231,19 +238,32 @@ function JobVacancies() {
               return (
                 <CardInterest
                   activeOpacity={0.8}
-                  onPress={() => handleNavigate('VacancyDetails')}
+                  onPress={() => navigate('VacancyDetails')}
                 >
-                  <TextCard>{info.title}</TextCard>
+                  <CardImage
+                    source={{
+                      uri: `https://${info.user.avatar_uri}`,
+                    }}
+                  />
+                  <TextCard>
+                    {info.title.length > 20
+                      ? `${info.title.substr(0, 17)}...`
+                      : info.title}
+                  </TextCard>
                   <Info>
                     {info.represents !== ' ' && (
                       <InfoCompanyContainer>
-                        <InfoCompany>{info.represents}</InfoCompany>
+                        <InfoCompany>
+                          {info.represents.length > 8
+                            ? `${info.represents.substr(0, 6)}...`
+                            : info.represents}
+                        </InfoCompany>
                       </InfoCompanyContainer>
                     )}
                     <InfoWageContainer>
                       <InfoWage>
                         {info.remuneration_value !== 0
-                          ? info.remuneration_value
+                          ? `R$ ${info.remuneration_value}`
                           : 'A combinar'}
                       </InfoWage>
                     </InfoWageContainer>
@@ -278,11 +298,7 @@ function JobVacancies() {
           data={jobs.slice(0, slice)}
           keyExtractor={(item: JobsProps) => item.id}
           renderItem={({ item }) => {
-            return navigation === 'list' ? (
-              <VacancyCard item={item} />
-            ) : (
-              <RecolocationCard />
-            );
+            return <VacancyCard item={item} />;
           }}
           ItemSeparatorComponent={() => <Separator />}
           ListFooterComponent={
@@ -319,12 +335,11 @@ function JobVacancies() {
           data={recolocations.slice(0, slice)}
           keyExtractor={(item: RecolocationProps) => item.id}
           renderItem={({ item }) => {
-            console.log(item.name);
-            return <RecolocationCard />;
+            return <RecolocationCard item={item} />;
           }}
           ItemSeparatorComponent={() => <Separator />}
           ListFooterComponent={
-            slice < jobs.length ? (
+            slice < recolocations.length ? (
               <Loading size="small" color={color.primary} />
             ) : (
               <Separator />

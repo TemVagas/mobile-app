@@ -214,3 +214,10 @@ export const Recolocation = styled.Text`
   font-size: ${wp(5)}px;
   color: ${color.text.secondary};
 `;
+export const CardImage = styled.Image`
+  height: ${hp(6)}px;
+  width: ${hp(6)}px;
+  border-radius: ${hp(6)}px;
+  align-self: flex-start;
+  margin-left: ${wp(3)}px;
+`;

@@ -31,8 +31,13 @@ interface JobsProps {
   title: string;
   type: string;
   updated_at: string;
+  user: UserProps;
 }
 
+interface UserProps {
+  avatar_uri: string;
+  curriculum_uri: string;
+}
 interface CategoryProps {
   id: string;
   name: string;
@@ -64,16 +69,20 @@ function VacancyCard({ item }: ItemProps) {
       onPress={() => handleNavigate('VacancyDetails')}
       activeOpacity={0.8}
     >
-      <Image source={{ uri: 'https://picsum.photos/200' }} />
+      <Image source={{ uri: `https://${item.user.avatar_uri}` }} />
       <Info>
-        <Title>{item.title}</Title>
+        <Title>
+          {item.title.length > 25
+            ? `${item.title.substr(0, 22)}...`
+            : item.title}
+        </Title>
         <SubtitleContainer>
           <Subtitle>{item.represents !== ' ' && item.represents}</Subtitle>
           <RemunerationContainer>
             <Remuneration>
               {item.remuneration_value === 0
                 ? 'A combinar'
-                : item.remuneration_value}
+                : `R$ ${item.remuneration_value}`}
             </Remuneration>
           </RemunerationContainer>
         </SubtitleContainer>

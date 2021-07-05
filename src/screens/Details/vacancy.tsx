@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Modalize } from 'react-native-modalize';
@@ -49,7 +49,10 @@ export interface ItemsProps {
 }
 
 function VacancyDetails() {
+  const { params } = useRoute();
   const { goBack } = useNavigation();
+
+  console.log(params);
 
   const contactRef = useRef<Modalize>(null);
 

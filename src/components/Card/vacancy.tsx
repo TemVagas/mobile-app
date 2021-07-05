@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -57,16 +57,9 @@ interface StateProps {
 function VacancyCard({ item }: ItemProps) {
   const { navigate } = useNavigation();
 
-  const handleNavigate = useCallback(
-    route => {
-      navigate(route);
-    },
-    [navigate],
-  );
-
   return (
     <CardContainer
-      onPress={() => handleNavigate('VacancyDetails')}
+      onPress={() => navigate('VacancyDetails', item)}
       activeOpacity={0.8}
     >
       <Image source={{ uri: `https://${item.user.avatar_uri}` }} />

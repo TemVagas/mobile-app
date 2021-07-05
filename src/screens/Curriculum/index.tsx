@@ -1,8 +1,16 @@
 import React from 'react';
-
+import { useRoute } from '@react-navigation/native';
 import PDFReader from 'rn-pdf-reader-js';
 
+interface CurriculumProps {
+  uri: string;
+}
+
 function Curriculum() {
+  const { params } = useRoute();
+
+  const curriculum = params as CurriculumProps;
+
   return (
     <PDFReader
       withPinchZoom={false}
@@ -10,7 +18,7 @@ function Curriculum() {
         backgroundColor: 'transparent',
       }}
       source={{
-        uri: 'http://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf',
+        uri: curriculum.uri,
       }}
     />
   );

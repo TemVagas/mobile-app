@@ -115,13 +115,6 @@ function JobVacancies() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleNavigate = useCallback(
-    route => {
-      navigate(route);
-    },
-    [navigate],
-  );
-
   const interestedJobs = useCallback(() => {
     if (signed) {
       api
@@ -238,7 +231,7 @@ function JobVacancies() {
               return (
                 <CardInterest
                   activeOpacity={0.8}
-                  onPress={() => navigate('VacancyDetails')}
+                  onPress={() => navigate('VacancyDetails', info)}
                 >
                   <CardImage
                     source={{

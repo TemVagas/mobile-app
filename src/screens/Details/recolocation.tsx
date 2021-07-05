@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Modalize } from 'react-native-modalize';
-import { Linking, View } from 'react-native';
+import { Linking, ToastAndroid, View } from 'react-native';
 import { color } from '../../constants';
 
 import {
@@ -24,19 +24,45 @@ import {
   ContactButton,
 } from './styles';
 
+interface RecolocationProps {
+  avatar_uri: string;
+  curriculum_uri: string;
+  name: string;
+  category: CategoryProps;
+  description: string;
+  phone_number: string;
+  email: string;
+}
+
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
 function VacancyDetails() {
+  const { params } = useRoute();
+
+  const recolocation = params as RecolocationProps;
+
   const { goBack, navigate } = useNavigation();
 
   const contactRef = useRef<Modalize>(null);
 
   const ContactWhatsApp = () => {
-    const url =
-      'whatsapp://send?text=Vim através do aplicativo JobFinder e gostaria de me candidatar para a vaga!&phone=5589999191275';
-    Linking.openURL(url);
+    const url = `whatsapp://send?text=Vim através do aplicativo JobFinder e tenho uma vaga pra voce!&phone=55${recolocation.phone_number.replace(
+      /\D/g,
+      '',
+    )}`;
+    Linking.openURL(url).catch(err =>
+      ToastAndroid.show(
+        'Instale o aplicativo Whatsapp para ter acesso a essa função.',
+        ToastAndroid.SHORT,
+      ),
+    );
   };
 
   const ContactMail = () => {
-    const url = 'mailto:toliveira@slideworks.cc';
+    const url = `mailto:${recolocation.email}`;
     Linking.openURL(url);
   };
 
@@ -56,23 +82,20 @@ function VacancyDetails() {
           </Header>
         </HeaderContainer>
         <Content>
-          <StyledImage source={{ uri: 'https://picsum.photos/200' }} />
-          <Profession>Usuário</Profession>
+          <StyledImage source={{ uri: `https://${recolocation.avatar_uri}` }} />
+          <Profession>{recolocation.name}</Profession>
           <Describe>
-            Esta em busca de recoloção no mercado de trabalho na area de
-            Desenvolvimento de software.
+            Esta em busca de recoloção no mercado de trabalho na area de{' '}
+            {recolocation.category.name}
           </Describe>
-          <Describe>
-            Doloribus quasi nemo corrupti aut. Rerum a adipisci voluptatibus
-            perspiciatis perferendis consequatur ab. Sed nihil autem harum id.
-            Omnis quo sit est culpa molestiae odio sequi quis eaque. Quia
-            deleniti maiores iusto dolores et dolor eos unde et. Est dolorem
-            consequatur itaque blanditiis atque est. Autem molestias rerum et
-            reiciendis ipsa assumenda molestiae. Nesciunt dignissimos non nobis
-            modi modi quia numquam nisi. Molestias et totam nisi tempore aliquam
-            esse asperiores facere.
-          </Describe>
-          <CurriculumButton onPress={() => navigate('Curriculum')}>
+          <Describe>{recolocation.description}</Describe>
+          <CurriculumButton
+            onPress={() =>
+              navigate('Curriculum', {
+                uri: `https://${recolocation.curriculum_uri}`,
+              })
+            }
+          >
             <CurriculumText>Visualizar Curriculo</CurriculumText>
             <FontAwesome
               name="long-arrow-right"

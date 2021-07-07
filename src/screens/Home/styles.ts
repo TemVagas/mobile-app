@@ -139,7 +139,7 @@ export const CardListInterest = styled(
   FlatList as new () => FlatList<JobsProps>,
 )`
   width: 100%;
-  height: ${hp(50)}px;
+  height: ${hp(30)}px;
 `;
 export const CardInterest = styled.TouchableOpacity`
   margin: 0px ${wp(2)}px 0px ${wp(5)}px;

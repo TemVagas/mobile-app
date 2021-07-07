@@ -233,11 +233,19 @@ function JobVacancies() {
                   activeOpacity={0.8}
                   onPress={() => navigate('VacancyDetails', info)}
                 >
-                  <CardImage
-                    source={{
-                      uri: `https://${info.user.avatar_uri}`,
-                    }}
-                  />
+                  {info.represents !== ' ' ? (
+                    <CardImage
+                      source={{
+                        uri: `https://${info.user.avatar_uri}`,
+                      }}
+                    />
+                  ) : (
+                    <CardImage
+                      source={{
+                        uri: `https://avatars.githubusercontent.com/u/83519462?s=400&u=746e11ce66b1ef17cde6d9e5167d431d16e3e8bd&v=4`,
+                      }}
+                    />
+                  )}
                   <TextCard>
                     {info.title.length > 20
                       ? `${info.title.substr(0, 17)}...`
@@ -256,7 +264,9 @@ function JobVacancies() {
                     <InfoWageContainer>
                       <InfoWage>
                         {info.remuneration_value !== 0
-                          ? `R$ ${info.remuneration_value}`
+                          ? `R$ ${info.remuneration_value
+                              .toFixed(2)
+                              .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`
                           : 'A combinar'}
                       </InfoWage>
                     </InfoWageContainer>

@@ -106,7 +106,9 @@ function VacancyDetails() {
             <Remuneration>
               {job.remuneration_value === 0
                 ? 'A combinar'
-                : `R$ ${job.remuneration_value}`}
+                : `R$ ${job.remuneration_value
+                    .toFixed(2)
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`}
             </Remuneration>
           </RemunerationContainer>
         </InfoContainer>

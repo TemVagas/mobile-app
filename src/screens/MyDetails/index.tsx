@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 
+import { Modalize } from 'react-native-modalize';
+import { Linking } from 'react-native';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { color } from '../../constants';
-import { JobsProps } from '../Profile';
 
 import {
   Container,
@@ -23,6 +25,12 @@ import {
   CardInfo,
   CardList,
   Separator,
+  Profession,
+  Represents,
+  Button,
+  ButtonText,
+  ModalizeContainer,
+  ContactButton,
 } from './styles';
 
 export interface ItemsProps {
@@ -32,26 +40,80 @@ export interface ItemsProps {
   value: string;
 }
 
+interface VacancyProps {
+  category: CategoryProps;
+  city: CityProps;
+  description: string;
+  email: string;
+  id: string;
+  phone_number: string;
+  represents: string;
+  type: string;
+  title: string;
+  remuneration_value: number;
+  user: UserProps;
+  favorite?: boolean;
+}
+
+interface UserProps {
+  avatar_uri: string;
+  curriculum_uri: string;
+  description: string;
+  email: string;
+  name: string;
+  phone_number: string;
+}
+
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
+interface CityProps {
+  id: string;
+  name: string;
+  state: StateProps;
+}
+
+interface StateProps {
+  id: string;
+  name: string;
+}
+
 function MyDetails() {
-  const { goBack } = useNavigation();
   const { params } = useRoute();
 
-  const job = params as JobsProps;
+  const { goBack } = useNavigation();
+  const contactRef = useRef<Modalize>(null);
+
+  const info = params as VacancyProps;
 
   const infoCard = [
+    { id: '1', icon: 'phone', value: info.phone_number },
     {
-      id: '1',
-      icon: 'phone',
-      value: job.phone_number || 'Dado não encontrado',
+      id: '2',
+      icon: 'map-marker',
+      value: `${info.city.name} - ${info.city.state.name
+        .substr(0, 2)
+        .toUpperCase()}`,
     },
-    { id: '2', icon: 'map-marker', value: job.city || 'Dado não encontrado' },
-    { id: '3', icon: 'briefcase', value: job.type || 'Dado não encontrado' },
-    {
-      id: '4',
-      icon: 'address-card',
-      value: job.title || 'Dado não encontrado',
-    },
+    { id: '3', icon: 'briefcase', value: info.type },
+    { id: '4', icon: 'address-card', value: info.category.name },
   ];
+
+  const ContactWhatsApp = () => {
+    const url = `whatsapp://send?text=Vim através do aplicativo JobFinder e gostaria de me candidatar para a vaga!&phone=55${info.phone_number.replace(
+      /\D/g,
+      '',
+    )}}`;
+    Linking.openURL(url);
+  };
+
+  const ContactMail = () => {
+    const url = `mailto:${info.email}`;
+
+    Linking.openURL(url);
+  };
 
   return (
     <Container showsVerticalScrollIndicator={false}>
@@ -68,22 +130,40 @@ function MyDetails() {
         </Header>
       </HeaderContainer>
       <Content>
-        <StyledImage source={{ uri: 'https://picsum.photos/200' }} />
+        {info.represents !== ' ' ? (
+          <>
+            <StyledImage source={{ uri: `https://${info.user.avatar_uri}` }} />
+            <Represents>{info.user.name} representando</Represents>
+          </>
+        ) : (
+          <>
+            <StyledImage
+              source={{
+                uri: `https://avatars.githubusercontent.com/u/83519462?s=400&u=746e11ce66b1ef17cde6d9e5167d431d16e3e8bd&v=4`,
+              }}
+            />
+            <Represents>Essa vaga veio de outra plataforma</Represents>
+          </>
+        )}
+        <Profession>{info.represents}</Profession>
         <InfoContainer>
           <RoleContainer>
-            <Info>Titulo da vaga</Info>
-            <Role>{job.title}</Role>
+            <Info>Cargo</Info>
+            <Role>{info.category.name}</Role>
           </RoleContainer>
           <RemunerationContainer>
             <Info>Remuneração</Info>
             <Remuneration>
-              {job.remuneration_value === 0
+              {info.remuneration_value === 0
                 ? 'A combinar'
-                : `R$ ${job.remuneration_value}`}
+                : `R$${info.remuneration_value
+                    .toFixed(2)
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`}
             </Remuneration>
           </RemunerationContainer>
         </InfoContainer>
-        <Describe>{job.description}</Describe>
+        <Describe>{info.title}</Describe>
+        <Describe>{info.description}</Describe>
 
         <CardList
           data={infoCard}
@@ -100,7 +180,29 @@ function MyDetails() {
             );
           }}
         />
+
+        {info.favorite && (
+          <>
+            <Button
+              activeOpacity={0.8}
+              onPress={() => contactRef.current?.open()}
+            >
+              <ButtonText>CONTATAR</ButtonText>
+            </Button>
+          </>
+        )}
       </Content>
+
+      <Modalize ref={contactRef} adjustToContentHeight>
+        <ModalizeContainer>
+          <ContactButton onPress={ContactWhatsApp}>
+            <FontAwesome name="whatsapp" size={hp(8)} color={color.primary} />
+          </ContactButton>
+          <ContactButton onPress={ContactMail}>
+            <FontAwesome name="envelope" size={hp(8)} color={color.primary} />
+          </ContactButton>
+        </ModalizeContainer>
+      </Modalize>
     </Container>
   );
 }

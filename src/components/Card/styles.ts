@@ -47,7 +47,7 @@ export const Subtitle = styled.Text`
   flex: 1;
 `;
 export const RemunerationContainer = styled.View`
-  flex: 0.7;
+  flex: 0.8;
   align-items: center;
   justify-content: center;
   background-color: ${color.placeholder};
@@ -57,4 +57,5 @@ export const RemunerationContainer = styled.View`
 
 export const Remuneration = styled.Text`
   font-family: ${font.regular};
+  font-size: ${wp(3)}px;
 `;

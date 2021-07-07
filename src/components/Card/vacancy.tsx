@@ -62,7 +62,15 @@ function VacancyCard({ item }: ItemProps) {
       onPress={() => navigate('VacancyDetails', item)}
       activeOpacity={0.8}
     >
-      <Image source={{ uri: `https://${item.user.avatar_uri}` }} />
+      {item.represents !== ' ' ? (
+        <Image source={{ uri: `https://${item.user.avatar_uri}` }} />
+      ) : (
+        <Image
+          source={{
+            uri: `https://avatars.githubusercontent.com/u/83519462?s=400&u=746e11ce66b1ef17cde6d9e5167d431d16e3e8bd&v=4`,
+          }}
+        />
+      )}
       <Info>
         <Title>
           {item.title.length > 25
@@ -75,7 +83,9 @@ function VacancyCard({ item }: ItemProps) {
             <Remuneration>
               {item.remuneration_value === 0
                 ? 'A combinar'
-                : `R$ ${item.remuneration_value}`}
+                : `R$ ${item.remuneration_value
+                    .toFixed(2)
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`}
             </Remuneration>
           </RemunerationContainer>
         </SubtitleContainer>

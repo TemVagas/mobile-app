@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Modalize } from 'react-native-modalize';
 
-import { Linking } from 'react-native';
+import { Linking, ToastAndroid } from 'react-native';
 import { color } from '../../constants';
 
 import {
@@ -33,13 +33,8 @@ import {
   ContactButton,
   FavoriteButton,
 } from './styles';
-
-const infoCard = [
-  { id: '1', icon: 'phone', value: '(89) 99999-9999' },
-  { id: '2', icon: 'map-marker', value: 'Picos - PI' },
-  { id: '3', icon: 'briefcase', value: 'Estagio' },
-  { id: '4', icon: 'address-card', value: 'Programador' },
-];
+import { useAuth } from '../../contexts/auth';
+import api from '../../services/api';
 
 export interface ItemsProps {
   id: string;
@@ -48,22 +43,78 @@ export interface ItemsProps {
   value: string;
 }
 
+interface VacancyProps {
+  category: CategoryProps;
+  city: CityProps;
+  description: string;
+  email: string;
+  id: string;
+  phone_number: string;
+  represents: string;
+  type: string;
+  title: string;
+  remuneration_value: number;
+  user: UserProps;
+}
+
+interface UserProps {
+  avatar_uri: string;
+  curriculum_uri: string;
+  description: string;
+  email: string;
+  name: string;
+  phone_number: string;
+}
+
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
+interface CityProps {
+  id: string;
+  name: string;
+  state: StateProps;
+}
+
+interface StateProps {
+  id: string;
+  name: string;
+}
+
 function VacancyDetails() {
   const { params } = useRoute();
+  const { signed } = useAuth();
   const { goBack } = useNavigation();
 
-  console.log(params);
+  const info = params as VacancyProps;
 
   const contactRef = useRef<Modalize>(null);
 
+  const infoCard = [
+    { id: '1', icon: 'phone', value: info.phone_number },
+    {
+      id: '2',
+      icon: 'map-marker',
+      value: `${info.city.name} - ${info.city.state.name
+        .substr(0, 2)
+        .toUpperCase()}`,
+    },
+    { id: '3', icon: 'briefcase', value: info.type },
+    { id: '4', icon: 'address-card', value: info.category.name },
+  ];
+
   const ContactWhatsApp = () => {
-    const url =
-      'whatsapp://send?text=Vim através do aplicativo JobFinder e gostaria de me candidatar para a vaga!&phone=5589999191275';
+    const url = `whatsapp://send?text=Vim através do aplicativo JobFinder e gostaria de me candidatar para a vaga!&phone=55${info.phone_number.replace(
+      /\D/g,
+      '',
+    )}}`;
     Linking.openURL(url);
   };
 
   const ContactMail = () => {
-    const url = 'mailto:toliveira@slideworks.cc';
+    const url = `mailto:${info.email}`;
+
     Linking.openURL(url);
   };
 
@@ -79,35 +130,69 @@ function VacancyDetails() {
             />
             <Title>Voltar</Title>
           </GoBackButton>
-          <FavoriteButton>
-            <FontAwesome name="bookmark" color={color.background} size={24} />
-          </FavoriteButton>
+          {signed && (
+            <FavoriteButton
+              onPress={() => {
+                ToastAndroid.show(
+                  'Favoritando vaga, aguarde...',
+                  ToastAndroid.SHORT,
+                );
+                api
+                  .post(`/jobs/like/${info.id}`)
+                  .then(() =>
+                    ToastAndroid.show(
+                      'Vaga favoritada com sucesso!',
+                      ToastAndroid.SHORT,
+                    ),
+                  )
+                  .catch(error => {
+                    ToastAndroid.show(
+                      error.response.data.message,
+                      ToastAndroid.SHORT,
+                    );
+                  });
+              }}
+            >
+              <FontAwesome name="bookmark" color={color.background} size={24} />
+            </FavoriteButton>
+          )}
         </Header>
       </HeaderContainer>
       <Content>
-        <StyledImage source={{ uri: 'https://picsum.photos/200' }} />
-        <Represents>Usuário representando</Represents>
-        <Profession>Empresa</Profession>
+        {info.represents !== ' ' ? (
+          <>
+            <StyledImage source={{ uri: `https://${info.user.avatar_uri}` }} />
+            <Represents>{info.user.name} representando</Represents>
+          </>
+        ) : (
+          <>
+            <StyledImage
+              source={{
+                uri: `https://avatars.githubusercontent.com/u/83519462?s=400&u=746e11ce66b1ef17cde6d9e5167d431d16e3e8bd&v=4`,
+              }}
+            />
+            <Represents>Essa vaga veio de outra plataforma</Represents>
+          </>
+        )}
+        <Profession>{info.represents}</Profession>
         <InfoContainer>
           <RoleContainer>
             <Info>Cargo</Info>
-            <Role>Programador</Role>
+            <Role>{info.category.name}</Role>
           </RoleContainer>
           <RemunerationContainer>
             <Info>Remuneração</Info>
-            <Remuneration>R$ 800</Remuneration>
+            <Remuneration>
+              {info.remuneration_value === 0
+                ? 'A combinar'
+                : `R$${info.remuneration_value
+                    .toFixed(2)
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`}
+            </Remuneration>
           </RemunerationContainer>
         </InfoContainer>
-        <Describe>
-          Doloribus quasi nemo corrupti aut. Rerum a adipisci voluptatibus
-          perspiciatis perferendis consequatur ab. Sed nihil autem harum id.
-          Omnis quo sit est culpa molestiae odio sequi quis eaque. Quia deleniti
-          maiores iusto dolores et dolor eos unde et. Est dolorem consequatur
-          itaque blanditiis atque est. Autem molestias rerum et reiciendis ipsa
-          assumenda molestiae. Nesciunt dignissimos non nobis modi modi quia
-          numquam nisi. Molestias et totam nisi tempore aliquam esse asperiores
-          facere.
-        </Describe>
+        <Describe>{info.title}</Describe>
+        <Describe>{info.description}</Describe>
 
         <CardList
           data={infoCard}

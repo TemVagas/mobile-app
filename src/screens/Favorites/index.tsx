@@ -111,14 +111,43 @@ function Favorites() {
               )}
             >
               <Vacancy>
-                <VacancyButton onPress={() => navigate('VacancyDetails', item)}>
+                <VacancyButton
+                  onPress={() =>
+                    navigate('MyDetails', {
+                      phone_number: item.phone_number,
+                      city: {
+                        name: item.city.name,
+                        state: {
+                          name: item.city.state.name,
+                        },
+                      },
+                      type: item.type,
+                      category: {
+                        name: item.category.name,
+                      },
+                      represents: item.represents,
+                      email: item.email,
+                      id: item.id,
+                      user: {
+                        name: data?.name,
+                        avatar_uri: data?.avatar_uri,
+                      },
+                      remuneration_value: item.remuneration_value,
+                      title: item.title,
+                      description: item.description,
+                      favorite: true,
+                    })
+                  }
+                >
                   <VacancyTitle>{item.title.substring(0, 16)}...</VacancyTitle>
                   <VacancyInfo>
                     <Company>{item.description.substring(0, 5)}...</Company>
                     <Remuneration>
                       {item.remuneration_value === 0
                         ? 'A combinar'
-                        : `R$ ${item.remuneration_value}`}
+                        : `R$ ${item.remuneration_value
+                            .toFixed(2)
+                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`}
                     </Remuneration>
                   </VacancyInfo>
                 </VacancyButton>

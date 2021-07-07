@@ -139,3 +139,16 @@ export const ModalizeContainer = styled.View`
   color: ${color.background};
 `;
 export const ContactButton = styled.TouchableOpacity``;
+export const Button = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+  background-color: ${color.secondary};
+  height: ${hp(8)}px;
+  margin: ${wp(3)}px ${wp(3)}px 0px;
+  border-radius: ${hp(1)}px;
+`;
+export const ButtonText = styled.Text`
+  color: ${color.background};
+  font-size: ${wp(4.5)}px;
+  font-family: ${font.medium};
+`;
